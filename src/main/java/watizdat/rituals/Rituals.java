@@ -9,6 +9,7 @@ import net.minecraft.registry.Registry;
 import net.minecraft.util.Identifier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import watizdat.rituals.init.ModBlocks;
 import watizdat.rituals.init.ModItems;
 
 public class Rituals implements ModInitializer {
@@ -23,5 +24,6 @@ public class Rituals implements ModInitializer {
     @Override
     public void onInitialize() {
         ModItems.init();
+        ModBlocks.init();
     }
 }

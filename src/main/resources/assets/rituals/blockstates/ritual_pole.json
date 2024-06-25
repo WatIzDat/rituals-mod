@@ -1,0 +1,6 @@
+{
+  "variants": {
+    "half=lower": { "model": "rituals:block/ritual_pole_bottom" },
+    "half=upper": { "model": "rituals:block/ritual_pole_top" }
+  }
+}

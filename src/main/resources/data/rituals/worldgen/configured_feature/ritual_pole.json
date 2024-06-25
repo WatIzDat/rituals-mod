@@ -1,0 +1,6 @@
+{
+  "type": "rituals:ritual_pole",
+  "config": {
+    "probability": 1
+  }
+}

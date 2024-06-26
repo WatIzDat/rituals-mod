@@ -10,6 +10,7 @@ import net.minecraft.util.Identifier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import watizdat.rituals.init.ModBlocks;
+import watizdat.rituals.init.ModEvents;
 import watizdat.rituals.init.ModFeatures;
 import watizdat.rituals.init.ModItems;
 
@@ -27,5 +28,6 @@ public class Rituals implements ModInitializer {
         ModItems.init();
         ModBlocks.init();
         ModFeatures.init();
+        ModEvents.init();
     }
 }

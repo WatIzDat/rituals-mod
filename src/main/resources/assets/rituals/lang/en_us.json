@@ -1,4 +1,5 @@
 {
   "item.rituals.ritual_token": "Ritual Token",
-  "item.rituals.ritual_token.tooltip": "Clerics are also interested in rituals..."
+  "item.rituals.ritual_token.tooltip": "Clerics are also interested in rituals...",
+  "block.rituals.bed.message": "Regaining sanity. Rituals will be reset."
 }

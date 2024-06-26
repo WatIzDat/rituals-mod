@@ -15,9 +15,9 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import watizdat.rituals.Rituals;
 import watizdat.rituals.network.ModNetworkConstants;
 import watizdat.rituals.state.ModPersistentState;
+import watizdat.rituals.state.ModPlayerData;
 
 @Mixin(LivingEntity.class)
 public abstract class LivingEntityMixin extends Entity {
@@ -30,15 +30,12 @@ public abstract class LivingEntityMixin extends Entity {
 	@Inject(at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/damage/DamageSource;getAttacker()Lnet/minecraft/entity/Entity;"), method = "onDeath")
 	private void rituals$onDeath(CallbackInfo info) {
 		if (!getWorld().isClient && getAttacker() != null) {
-			Rituals.LOGGER.info(EntityType.getId(getType()).toString());
-
-			ModPersistentState state = ModPersistentState.getServerState(getWorld().getServer());
-
-			state.entityTypesKilled.add(getType());
+			ModPlayerData playerState = ModPersistentState.getPlayerState(getAttacker());
+			playerState.entityTypesKilled.add(getType());
 
 			MinecraftServer server = getWorld().getServer();
 			PacketByteBuf buf = PacketByteBufs.create();
-			buf.writeCollection(state.entityTypesKilled.stream().map(EntityType::getId).toList(), PacketByteBuf::writeIdentifier);
+			buf.writeCollection(playerState.entityTypesKilled.stream().map(EntityType::getId).toList(), PacketByteBuf::writeIdentifier);
 
 			ServerPlayerEntity playerEntity = server.getPlayerManager().getPlayer(getAttacker().getUuid());
 			server.execute(() -> {

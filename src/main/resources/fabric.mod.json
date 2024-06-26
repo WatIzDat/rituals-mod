@@ -20,6 +20,9 @@
 		],
 		"client": [
 			"watizdat.rituals.RitualsClient"
+		],
+		"preLaunch": [
+			"watizdat.rituals.RitualsPreLaunch"
 		]
 	},
 	"mixins": [

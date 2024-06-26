@@ -6,6 +6,7 @@ import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.enums.DoubleBlockHalf;
+import net.minecraft.entity.EntityType;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -18,6 +19,8 @@ import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import watizdat.rituals.network.ModNetworkConstants;
+import watizdat.rituals.state.ModPersistentState;
+import watizdat.rituals.state.ModPlayerData;
 
 public class RitualPoleBlock extends Block {
     public static final EnumProperty<DoubleBlockHalf> HALF = EnumProperty.of("half", DoubleBlockHalf.class);
@@ -33,7 +36,13 @@ public class RitualPoleBlock extends Block {
             return ActionResult.SUCCESS;
         }
 
-        ServerPlayNetworking.send((ServerPlayerEntity) player, ModNetworkConstants.OPEN_RITUAL_POLE_GUI_PACKET_ID, PacketByteBufs.empty());
+        ModPlayerData playerState = ModPersistentState.getPlayerState(player);
+
+        PacketByteBuf buf = PacketByteBufs.create();
+        buf.writeCollection(playerState.entityTypesKilled.stream().map(EntityType::getId).toList(), PacketByteBuf::writeIdentifier);
+
+        ServerPlayNetworking.send((ServerPlayerEntity) player, ModNetworkConstants.OPEN_RITUAL_POLE_GUI_PACKET_ID, buf);
+
         return ActionResult.SUCCESS;
     }
 

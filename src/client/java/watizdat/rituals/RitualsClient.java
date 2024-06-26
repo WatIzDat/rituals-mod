@@ -7,6 +7,7 @@ import net.minecraft.network.PacketByteBuf;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import watizdat.rituals.network.ModNetworkConstants;
+import watizdat.rituals.screen.RitualPoleScreen;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,8 +16,10 @@ public class RitualsClient implements ClientModInitializer {
 	@Override
 	public void onInitializeClient() {
 		ClientPlayNetworking.registerGlobalReceiver(ModNetworkConstants.OPEN_RITUAL_POLE_GUI_PACKET_ID, ((client, handler, buf, responseSender) -> {
+			List<Identifier> entityTypesKilled = buf.readCollection(ArrayList::new, PacketByteBuf::readIdentifier);
+
 			client.execute(() -> {
-				client.setScreen(new FatalErrorScreen(Text.literal("test"), Text.literal("test")));
+				client.setScreen(new RitualPoleScreen(entityTypesKilled));
 			});
 		}));
 

@@ -11,9 +11,7 @@ import net.minecraft.world.PersistentStateManager;
 import net.minecraft.world.World;
 import watizdat.rituals.Rituals;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.UUID;
 
 public class ModPersistentState extends PersistentState {
@@ -21,16 +19,6 @@ public class ModPersistentState extends PersistentState {
 
     @Override
     public NbtCompound writeNbt(NbtCompound nbt) {
-//        NbtCompound entityTypesKilledNbt = new NbtCompound();
-//
-//        for (int i = 0; i < entityTypesKilled.size(); i++) {
-//            EntityType<?> entityType = entityTypesKilled.get(i);
-//
-//            entityTypesKilledNbt.putString("entityTypesKilled" + i, EntityType.getId(entityType).toString());
-//        }
-//
-//        nbt.put("entityTypesKilled", entityTypesKilledNbt);
-
         NbtCompound playersNbt = new NbtCompound();
 
         players.forEach((uuid, playerData) -> {
@@ -56,11 +44,6 @@ public class ModPersistentState extends PersistentState {
 
     public static ModPersistentState createFromNbt(NbtCompound tag) {
         ModPersistentState state = new ModPersistentState();
-//
-//        NbtCompound entityTypesKilledNbt = tag.getCompound("entityTypesKilled");
-//        entityTypesKilledNbt.getKeys().forEach(key -> {
-//            state.entityTypesKilled.add(Registries.ENTITY_TYPE.get(new Identifier(entityTypesKilledNbt.getString(key))));
-//        });
 
         NbtCompound playersNbt = tag.getCompound("players");
 

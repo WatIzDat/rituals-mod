@@ -21,6 +21,19 @@ public class RitualProcedureHelper {
 
         ModPlayerData playerState = ModPersistentState.getPlayerState(player);
 
+        ServerWorld serverWorld = player.getServer().getWorld(player.getWorld().getRegistryKey());
+
+        ((ParticleTimerAccess) serverWorld).rituals$setTimer(20L);
+
+        for (int t = 0; t < 360; t += 10) {
+            float x = radius * MathHelper.cos(t) + ritualPolePos.getX();
+            float z = radius * MathHelper.sin(t) + ritualPolePos.getZ();
+
+            for (int y = ritualPolePos.getY() - 50; y < ritualPolePos.getY() + 50; y += 2) {
+                ((ParticleTimerAccess) serverWorld).rituals$addPosition(x, y, z);
+            }
+        }
+
         for (EntityType<?> entityType : playerState.entityTypesKilled) {
             List<BlockPos> validSpawnPositions = new ArrayList<>();
             Set<Pair<Integer, Integer>> duplicates = new HashSet<>();
@@ -69,8 +82,6 @@ public class RitualProcedureHelper {
             Random random = new Random();
 
             BlockPos pos = validSpawnPositions.get(random.nextInt(validSpawnPositions.size()));
-
-            ServerWorld serverWorld = player.getServer().getWorld(player.getWorld().getRegistryKey());
 
             entityType.spawn(serverWorld, pos, SpawnReason.MOB_SUMMONED);
         }

@@ -9,16 +9,36 @@ import net.minecraft.util.Identifier;
 import net.minecraft.world.PersistentState;
 import net.minecraft.world.PersistentStateManager;
 import net.minecraft.world.World;
+import org.joml.Vector3d;
 import watizdat.rituals.Rituals;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.UUID;
 
 public class ModPersistentState extends PersistentState {
     public HashMap<UUID, ModPlayerData> players = new HashMap<>();
+    public List<Vector3d> particlePositions = new ArrayList<>();
 
     @Override
     public NbtCompound writeNbt(NbtCompound nbt) {
+        NbtCompound particlePositionsNbt = new NbtCompound();
+
+        for (int i = 0; i < particlePositions.size(); i++) {
+            Vector3d position = particlePositions.get(i);
+
+            NbtCompound vector3dNbt = new NbtCompound();
+
+            vector3dNbt.putDouble("x", position.x);
+            vector3dNbt.putDouble("y", position.y);
+            vector3dNbt.putDouble("z", position.z);
+
+            particlePositionsNbt.put("particlePositions" + i, vector3dNbt);
+        }
+
+        nbt.put("particlePositions", particlePositionsNbt);
+
         NbtCompound playersNbt = new NbtCompound();
 
         players.forEach((uuid, playerData) -> {
@@ -44,6 +64,20 @@ public class ModPersistentState extends PersistentState {
 
     public static ModPersistentState createFromNbt(NbtCompound tag) {
         ModPersistentState state = new ModPersistentState();
+
+        NbtCompound particlePositionsNbt = tag.getCompound("particlePositions");
+
+        particlePositionsNbt.getKeys().forEach(particlePositionsKey -> {
+            NbtCompound vector3dNbt = particlePositionsNbt.getCompound(particlePositionsKey);
+
+            Vector3d vector3d = new Vector3d();
+
+            vector3d.x = vector3dNbt.getDouble("x");
+            vector3d.y = vector3dNbt.getDouble("y");
+            vector3d.z = vector3dNbt.getDouble("z");
+
+            state.particlePositions.add(vector3d);
+        });
 
         NbtCompound playersNbt = tag.getCompound("players");
 

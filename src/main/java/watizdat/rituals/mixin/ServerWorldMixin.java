@@ -8,12 +8,11 @@ import org.jetbrains.annotations.NotNull;
 import org.joml.Vector3d;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
-import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import watizdat.rituals.helper.ParticleTimerAccess;
-import watizdat.rituals.init.ModEvents;
+import watizdat.rituals.helper.RitualProcedureHelper;
 import watizdat.rituals.state.ModPersistentState;
 
 @Mixin(ServerWorld.class)
@@ -22,36 +21,36 @@ public abstract class ServerWorldMixin implements ParticleTimerAccess {
 
     @Shadow @NotNull public abstract MinecraftServer getServer();
 
-    @Unique
-    private long maxTicks = 20;
-
     @Inject(at = @At("TAIL"), method = "tick")
     private void rituals$tick(CallbackInfo info) {
-        ModEvents.ticks--;
+        RitualProcedureHelper.particleTimerTicks--;
 
-        if (ModEvents.ticks == 0L) {
-            for (Vector3d position : ModEvents.positions) {
+        if (RitualProcedureHelper.particleTimerTicks == 0L) {
+            for (Vector3d position : RitualProcedureHelper.particlePositions) {
                 spawnParticles(new DustParticleEffect(DustParticleEffect.RED, 4f), position.x, position.y, position.z, 1, 0d, 0d, 0d, 0d);
             }
 
-            ModEvents.ticks = maxTicks;
+            RitualProcedureHelper.particleTimerTicks = RitualProcedureHelper.PARTICLE_TIMER_MAX_TICKS;
         }
     }
 
     @Override
-    public void rituals$setTimer(long ticks) {
-        maxTicks = ticks;
-        ModEvents.ticks = ticks;
+    public void rituals$setTimer() {
+        RitualProcedureHelper.particleTimerTicks = RitualProcedureHelper.PARTICLE_TIMER_MAX_TICKS;
     }
 
     @Override
-    public void rituals$addPosition(double x, double y, double z) {
+    public void rituals$addTowerPosition(double x, double y, double z, double middleY) {
         Vector3d vector3d = new Vector3d(x, y, z);
 
-        ModEvents.positions.add(vector3d);
+        RitualProcedureHelper.particlePositions.add(vector3d);
 
         ModPersistentState state = ModPersistentState.getServerState(getServer());
 
-        state.particlePositions.add(vector3d);
+        Vector3d uniquePosition = new Vector3d(x, middleY, z);
+
+        if (!state.particlePositions.contains(uniquePosition)) {
+            state.particlePositions.add(uniquePosition);
+        }
     }
 }

@@ -10,12 +10,29 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.RaycastContext;
+import org.joml.Vector3d;
 import watizdat.rituals.state.ModPersistentState;
 import watizdat.rituals.state.ModPlayerData;
 
 import java.util.*;
 
 public class RitualProcedureHelper {
+    public static final long PARTICLE_TIMER_MAX_TICKS = 20L;
+    public static List<Vector3d> particlePositions = new ArrayList<>();
+    public static long particleTimerTicks;
+
+    public static void setParticlePositions(List<Vector3d> uniquePositions) {
+        List<Vector3d> positions = new ArrayList<>();
+
+        for (Vector3d position : uniquePositions) {
+            for (int y = MathHelper.floor(position.y - 50); y < position.y + 50; y += 2) {
+                positions.add(new Vector3d(position.x, y, position.z));
+            }
+        }
+
+        particlePositions = new ArrayList<>(positions);
+    }
+
     public static void startRitualProcedure(BlockPos ritualPolePos, PlayerEntity player) {
         int radius = 10;
 
@@ -23,14 +40,14 @@ public class RitualProcedureHelper {
 
         ServerWorld serverWorld = player.getServer().getWorld(player.getWorld().getRegistryKey());
 
-        ((ParticleTimerAccess) serverWorld).rituals$setTimer(20L);
+        ((ParticleTimerAccess) serverWorld).rituals$setTimer();
 
         for (int t = 0; t < 360; t += 10) {
             float x = radius * MathHelper.cos(t) + ritualPolePos.getX();
             float z = radius * MathHelper.sin(t) + ritualPolePos.getZ();
 
             for (int y = ritualPolePos.getY() - 50; y < ritualPolePos.getY() + 50; y += 2) {
-                ((ParticleTimerAccess) serverWorld).rituals$addPosition(x, y, z);
+                ((ParticleTimerAccess) serverWorld).rituals$addTowerPosition(x, y, z, ritualPolePos.getY());
             }
         }
 

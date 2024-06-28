@@ -40,6 +40,7 @@ public class RitualPoleBlock extends Block {
 
         PacketByteBuf buf = PacketByteBufs.create();
         buf.writeCollection(playerState.entityTypesKilled.stream().map(EntityType::getId).toList(), PacketByteBuf::writeIdentifier);
+        buf.writeBlockPos(pos);
 
         ServerPlayNetworking.send((ServerPlayerEntity) player, ModNetworkConstants.OPEN_RITUAL_POLE_GUI_PACKET_ID, buf);
 

@@ -29,7 +29,7 @@ public abstract class LivingEntityMixin extends Entity {
 
 	@Inject(at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/damage/DamageSource;getAttacker()Lnet/minecraft/entity/Entity;"), method = "onDeath")
 	private void rituals$onDeath(CallbackInfo info) {
-		if (!getWorld().isClient && getAttacker() != null) {
+		if (!getWorld().isClient && getAttacker() != null && getAttacker().isPlayer()) {
 			ModPlayerData playerState = ModPersistentState.getPlayerState(getAttacker());
 			playerState.entityTypesKilled.add(getType());
 

@@ -8,20 +8,27 @@ import io.wispforest.owo.ui.container.ScrollContainer;
 import io.wispforest.owo.ui.core.*;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
+import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
+import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
+import net.minecraft.network.PacketByteBuf;
 import net.minecraft.registry.Registries;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
 import watizdat.rituals.Rituals;
+import watizdat.rituals.network.ModNetworkConstants;
 
 import java.util.List;
 
 @Environment(EnvType.CLIENT)
 public class RitualPoleScreen extends BaseOwoScreen<FlowLayout> {
     private final List<Identifier> entityTypesKilled;
+    private final BlockPos pos;
 
-    public RitualPoleScreen(List<Identifier> entityTypesKilled) {
+    public RitualPoleScreen(List<Identifier> entityTypesKilled, BlockPos pos) {
         this.entityTypesKilled = entityTypesKilled;
+        this.pos = pos;
     }
 
     @Override
@@ -98,7 +105,12 @@ public class RitualPoleScreen extends BaseOwoScreen<FlowLayout> {
                     client.setScreen(null);
                 }))
                 .child(Components.button(Text.translatable("gui.rituals.ritual_pole.start_ritual_button"), button -> {
-                    Rituals.LOGGER.info("Start ritual pressed");
+                    client.setScreen(null);
+
+                    PacketByteBuf buf = PacketByteBufs.create();
+                    buf.writeBlockPos(pos);
+
+                    ClientPlayNetworking.send(ModNetworkConstants.START_RITUAL_PACKET_ID, buf);
                 }).margins(Insets.left(10)));
 
         container.child(buttonContainer);

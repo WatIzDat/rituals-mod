@@ -2,17 +2,10 @@ package watizdat.rituals;
 
 import net.fabricmc.api.ModInitializer;
 
-import net.fabricmc.fabric.api.item.v1.FabricItemSettings;
-import net.minecraft.item.Item;
-import net.minecraft.registry.Registries;
-import net.minecraft.registry.Registry;
 import net.minecraft.util.Identifier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import watizdat.rituals.init.ModBlocks;
-import watizdat.rituals.init.ModEvents;
-import watizdat.rituals.init.ModFeatures;
-import watizdat.rituals.init.ModItems;
+import watizdat.rituals.init.*;
 
 public class Rituals implements ModInitializer {
     public static final String MOD_ID = "rituals";
@@ -29,5 +22,6 @@ public class Rituals implements ModInitializer {
         ModBlocks.init();
         ModFeatures.init();
         ModEvents.init();
+        ModServerReceivers.init();
     }
 }

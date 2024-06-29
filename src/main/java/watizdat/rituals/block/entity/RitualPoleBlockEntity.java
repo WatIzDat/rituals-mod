@@ -42,8 +42,10 @@ public class RitualPoleBlockEntity extends BlockEntity {
     public void removeEntityUuid(UUID uuid) {
         entityUuids.remove(uuid);
 
+        markDirty();
+
         if (entityUuids.isEmpty()) {
-            Rituals.LOGGER.info("All entities killed");
+            timerStarted = false;
         }
     }
 
@@ -114,9 +116,11 @@ public class RitualPoleBlockEntity extends BlockEntity {
 
             Entity entity = entityType.spawn(serverWorld, pos, SpawnReason.MOB_SUMMONED);
 
-            entity.setAttached(ModDataAttachments.RITUAL_POLE_POS_PERSISTENT, getPos());
+            entity.setAttached(ModDataAttachments.getRitualPolePosPersistent(), new BlockPos(getPos().getX(), getPos().getY(), getPos().getZ()));
 
             entityUuids.add(entity.getUuid());
+
+            markDirty();
         }
     }
 
@@ -185,11 +189,25 @@ public class RitualPoleBlockEntity extends BlockEntity {
         timerTicks = TIMER_MAX_TICKS;
 
         setParticlePositions();
+
+        NbtCompound entityUuidsNbt = nbt.getCompound("entityUuids");
+
+        entityUuidsNbt.getKeys().forEach(key -> {
+            entityUuids.add(entityUuidsNbt.getUuid(key));
+        });
     }
 
     @Override
     protected void writeNbt(NbtCompound nbt) {
         nbt.putBoolean("timerStarted", timerStarted);
+
+        NbtCompound entityUuidsNbt = new NbtCompound();
+
+        for (int i = 0; i < entityUuids.size(); i++) {
+            entityUuidsNbt.putUuid(String.valueOf(i), entityUuids.get(i));
+        }
+
+        nbt.put("entityUuids", entityUuidsNbt);
 
         super.writeNbt(nbt);
     }

@@ -33,8 +33,8 @@ public abstract class LivingEntityMixin extends Entity {
 	@Inject(at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/damage/DamageSource;getAttacker()Lnet/minecraft/entity/Entity;"), method = "onDeath")
 	private void rituals$onDeath(CallbackInfo info) {
 		if (!getWorld().isClient) {
-			if (hasAttached(ModDataAttachments.RITUAL_POLE_POS_PERSISTENT)) {
-				BlockPos ritualPolePos = getAttached(ModDataAttachments.RITUAL_POLE_POS_PERSISTENT);
+			if (hasAttached(ModDataAttachments.getRitualPolePosPersistent())) {
+				BlockPos ritualPolePos = getAttached(ModDataAttachments.getRitualPolePosPersistent());
 
 				((RitualPoleBlockEntity) getWorld().getBlockEntity(ritualPolePos)).removeEntityUuid(getUuid());
 			} else if (getAttacker() != null && getAttacker().isPlayer()) {

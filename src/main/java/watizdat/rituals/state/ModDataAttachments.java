@@ -6,8 +6,16 @@ import net.minecraft.util.math.BlockPos;
 import watizdat.rituals.Rituals;
 
 public class ModDataAttachments {
-    public static final AttachmentType<BlockPos> RITUAL_POLE_POS_PERSISTENT = AttachmentRegistry.createPersistent(
-            Rituals.id("ritual_pole_pos_persistent"),
-            BlockPos.CODEC
-    );
+    private static AttachmentType<BlockPos> ritualPolePosPersistent;
+
+    public static void init() {
+        ritualPolePosPersistent = AttachmentRegistry.<BlockPos>builder()
+                .persistent(BlockPos.CODEC)
+                .copyOnDeath()
+                .buildAndRegister(Rituals.id("ritual_pole_pos_persistent"));
+    }
+
+    public static AttachmentType<BlockPos> getRitualPolePosPersistent() {
+        return ritualPolePosPersistent;
+    }
 }

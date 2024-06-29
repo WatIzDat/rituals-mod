@@ -13,22 +13,28 @@ import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.registry.Registries;
 import net.minecraft.text.Text;
+import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
 import watizdat.rituals.Rituals;
+import watizdat.rituals.enums.RitualState;
 import watizdat.rituals.network.ModNetworkConstants;
 
 import java.util.List;
 
 @Environment(EnvType.CLIENT)
 public class RitualPoleScreen extends BaseOwoScreen<FlowLayout> {
+    private RitualState ritualState;
     private final List<Identifier> entityTypesKilled;
     private final BlockPos pos;
 
-    public RitualPoleScreen(List<Identifier> entityTypesKilled, BlockPos pos) {
+    public RitualPoleScreen(RitualState ritualState, List<Identifier> entityTypesKilled, BlockPos pos) {
+        this.ritualState = ritualState;
         this.entityTypesKilled = entityTypesKilled;
         this.pos = pos;
+
+        Rituals.LOGGER.info(ritualState.toString());
     }
 
     @Override
@@ -63,29 +69,43 @@ public class RitualPoleScreen extends BaseOwoScreen<FlowLayout> {
                                     .margins(Insets.bottom(10))
                 );
 
-        ScrollContainer<FlowLayout> scrollContainer = Containers.verticalScroll(Sizing.fill(100), Sizing.fixed(150), Components.list(entityTypesKilled, flowLayout -> {
-            flowLayout.horizontalAlignment(HorizontalAlignment.CENTER);
-            flowLayout.verticalAlignment(VerticalAlignment.CENTER);
-        }, identifier -> {
-            FlowLayout entry = Containers.horizontalFlow(Sizing.fill(100), Sizing.content(40));
+        if (ritualState == RitualState.SUCCESS) {
+            FlowLayout labelContainer = Containers.verticalFlow(Sizing.fill(100), Sizing.fixed(150));
 
-            entry.horizontalAlignment(HorizontalAlignment.CENTER);
-            entry.verticalAlignment(VerticalAlignment.CENTER);
 
-            entry.child(Components.entity(Sizing.fixed(25), Registries.ENTITY_TYPE.get(identifier), null)
-                    .margins(Insets.right(40)));
-            entry.child(Components.label(Registries.ENTITY_TYPE.get(identifier).getName()));
+            labelContainer.surface(Surface.VANILLA_TRANSLUCENT);
+            labelContainer.margins(Insets.bottom(10));
+            labelContainer.horizontalAlignment(HorizontalAlignment.CENTER);
+            labelContainer.verticalAlignment(VerticalAlignment.CENTER);
 
-            return entry;
-        }, true));
+            labelContainer.child(Components.label(Text.literal("Success!").formatted(Formatting.GREEN)));
 
-        scrollContainer.scrollbarThiccness(5);
-        scrollContainer.fixedScrollbarLength(0);
+            container.child(labelContainer);
+        } else {
+            ScrollContainer<FlowLayout> scrollContainer = Containers.verticalScroll(Sizing.fill(100), Sizing.fixed(150), Components.list(entityTypesKilled, flowLayout -> {
+                flowLayout.horizontalAlignment(HorizontalAlignment.CENTER);
+                flowLayout.verticalAlignment(VerticalAlignment.CENTER);
+            }, identifier -> {
+                FlowLayout entry = Containers.horizontalFlow(Sizing.fill(100), Sizing.content(40));
 
-        scrollContainer.surface(Surface.VANILLA_TRANSLUCENT);
-        scrollContainer.margins(Insets.bottom(10));
+                entry.horizontalAlignment(HorizontalAlignment.CENTER);
+                entry.verticalAlignment(VerticalAlignment.CENTER);
 
-        container.child(scrollContainer);
+                entry.child(Components.entity(Sizing.fixed(25), Registries.ENTITY_TYPE.get(identifier), null)
+                        .margins(Insets.right(40)));
+                entry.child(Components.label(Registries.ENTITY_TYPE.get(identifier).getName()));
+
+                return entry;
+            }, true));
+
+            scrollContainer.scrollbarThiccness(5);
+            scrollContainer.fixedScrollbarLength(0);
+
+            scrollContainer.surface(Surface.VANILLA_TRANSLUCENT);
+            scrollContainer.margins(Insets.bottom(10));
+
+            container.child(scrollContainer);
+        }
 
         container
                 .child(
@@ -96,22 +116,34 @@ public class RitualPoleScreen extends BaseOwoScreen<FlowLayout> {
                 );
 
         FlowLayout buttonContainer = Containers.horizontalFlow(Sizing.fill(100), Sizing.content());
-
-        buttonContainer
-                .horizontalAlignment(HorizontalAlignment.RIGHT);
+        buttonContainer.horizontalAlignment(HorizontalAlignment.RIGHT);
 
         buttonContainer
                 .child(Components.button(Text.translatable("gui.rituals.ritual_pole.cancel_button"), button -> {
                     client.setScreen(null);
-                }))
-                .child(Components.button(Text.translatable("gui.rituals.ritual_pole.start_ritual_button"), button -> {
-                    client.setScreen(null);
+                }));
 
-                    PacketByteBuf buf = PacketByteBufs.create();
-                    buf.writeBlockPos(pos);
+        if (ritualState == RitualState.SUCCESS) {
+            buttonContainer
+                    .child(Components.button(Text.literal("Collect Loot"), button -> {
+                        Rituals.LOGGER.info("Collected loot");
 
-                    ClientPlayNetworking.send(ModNetworkConstants.START_RITUAL_PACKET_ID, buf);
-                }).margins(Insets.left(10)));
+                        PacketByteBuf buf = PacketByteBufs.create();
+                        buf.writeBlockPos(pos);
+
+                        ClientPlayNetworking.send(ModNetworkConstants.RESET_RITUAL_STATE_PACKET_ID, buf);
+                    }).margins(Insets.left(10)));
+        } else {
+            buttonContainer
+                    .child(Components.button(Text.translatable("gui.rituals.ritual_pole.start_ritual_button"), button -> {
+                        client.setScreen(null);
+
+                        PacketByteBuf buf = PacketByteBufs.create();
+                        buf.writeBlockPos(pos);
+
+                        ClientPlayNetworking.send(ModNetworkConstants.START_RITUAL_PACKET_ID, buf);
+                    }).margins(Insets.left(10)));
+        }
 
         container.child(buttonContainer);
 

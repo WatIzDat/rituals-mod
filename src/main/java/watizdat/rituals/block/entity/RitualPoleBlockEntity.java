@@ -18,6 +18,7 @@ import net.minecraft.world.RaycastContext;
 import net.minecraft.world.World;
 import org.joml.Vector3d;
 import watizdat.rituals.Rituals;
+import watizdat.rituals.enums.RitualState;
 import watizdat.rituals.init.ModBlockEntityTypes;
 import watizdat.rituals.state.ModDataAttachments;
 import watizdat.rituals.state.ModPersistentState;
@@ -26,6 +27,7 @@ import watizdat.rituals.state.ModPlayerData;
 import java.util.*;
 
 public class RitualPoleBlockEntity extends BlockEntity {
+    private RitualState ritualState = RitualState.NOT_STARTED;
     private List<UUID> entityUuids = new ArrayList<>();
     private List<Vector3d> particlePositions = new ArrayList<>();
 
@@ -45,12 +47,14 @@ public class RitualPoleBlockEntity extends BlockEntity {
         markDirty();
 
         if (entityUuids.isEmpty()) {
-            timerStarted = false;
+            stopRitual();
         }
     }
 
     public void startRitual(PlayerEntity player) {
         Rituals.LOGGER.info("Ritual started");
+
+        ritualState = RitualState.IN_PROGRESS;
 
         timerStarted = true;
         timerTicks = TIMER_MAX_TICKS;
@@ -114,6 +118,7 @@ public class RitualPoleBlockEntity extends BlockEntity {
 
             ServerWorld serverWorld = player.getServer().getWorld(player.getWorld().getRegistryKey());
 
+            // TODO: Highlight the entity so the player always knows where they are
             Entity entity = entityType.spawn(serverWorld, pos, SpawnReason.MOB_SUMMONED);
 
             entity.setAttached(ModDataAttachments.getRitualPolePosPersistent(), new BlockPos(getPos().getX(), getPos().getY(), getPos().getZ()));
@@ -122,6 +127,22 @@ public class RitualPoleBlockEntity extends BlockEntity {
 
             markDirty();
         }
+    }
+
+    public void stopRitual() {
+        ritualState = RitualState.SUCCESS;
+
+        timerStarted = false;
+
+        markDirty();
+    }
+
+    public RitualState getRitualState() {
+        return ritualState;
+    }
+
+    public void resetRitualState() {
+        ritualState = RitualState.NOT_STARTED;
     }
 
     private static BlockPos canSpawn(Vec3d raycastStart, Vec3d raycastEnd, PlayerEntity player, EntityType<?> entityType) {
@@ -195,6 +216,8 @@ public class RitualPoleBlockEntity extends BlockEntity {
         entityUuidsNbt.getKeys().forEach(key -> {
             entityUuids.add(entityUuidsNbt.getUuid(key));
         });
+
+        ritualState = Enum.valueOf(RitualState.class, nbt.getString("ritualState"));
     }
 
     @Override
@@ -208,6 +231,8 @@ public class RitualPoleBlockEntity extends BlockEntity {
         }
 
         nbt.put("entityUuids", entityUuidsNbt);
+
+        nbt.putString("ritualState", ritualState.toString());
 
         super.writeNbt(nbt);
     }

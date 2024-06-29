@@ -20,6 +20,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 import watizdat.rituals.block.entity.RitualPoleBlockEntity;
+import watizdat.rituals.enums.RitualState;
 import watizdat.rituals.init.ModBlockEntityTypes;
 import watizdat.rituals.network.ModNetworkConstants;
 import watizdat.rituals.state.ModPersistentState;
@@ -44,6 +45,9 @@ public class RitualPoleBlock extends BlockWithEntity {
         PacketByteBuf buf = PacketByteBufs.create();
         buf.writeCollection(playerState.entityTypesKilled.stream().map(EntityType::getId).toList(), PacketByteBuf::writeIdentifier);
         buf.writeBlockPos(pos);
+
+        RitualState ritualState = ((RitualPoleBlockEntity) world.getBlockEntity(pos)).getRitualState();
+        buf.writeEnumConstant(ritualState);
 
         ServerPlayNetworking.send((ServerPlayerEntity) player, ModNetworkConstants.OPEN_RITUAL_POLE_GUI_PACKET_ID, buf);
 

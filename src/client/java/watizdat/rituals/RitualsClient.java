@@ -7,6 +7,7 @@ import net.minecraft.network.PacketByteBuf;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
+import watizdat.rituals.enums.RitualState;
 import watizdat.rituals.network.ModNetworkConstants;
 import watizdat.rituals.screen.RitualPoleScreen;
 
@@ -19,9 +20,10 @@ public class RitualsClient implements ClientModInitializer {
 		ClientPlayNetworking.registerGlobalReceiver(ModNetworkConstants.OPEN_RITUAL_POLE_GUI_PACKET_ID, ((client, handler, buf, responseSender) -> {
 			List<Identifier> entityTypesKilled = buf.readCollection(ArrayList::new, PacketByteBuf::readIdentifier);
 			BlockPos pos = buf.readBlockPos();
+			RitualState ritualState = buf.readEnumConstant(RitualState.class);
 
 			client.execute(() -> {
-				client.setScreen(new RitualPoleScreen(entityTypesKilled, pos));
+				client.setScreen(new RitualPoleScreen(ritualState, entityTypesKilled, pos));
 			});
 		}));
 

@@ -20,6 +20,7 @@ public class Rituals implements ModInitializer {
     public void onInitialize() {
         ModItems.init();
         ModBlocks.init();
+        ModBlockEntityTypes.init();
         ModFeatures.init();
         ModEvents.init();
         ModServerReceivers.init();

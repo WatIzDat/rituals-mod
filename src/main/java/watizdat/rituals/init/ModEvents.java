@@ -26,12 +26,12 @@ public class ModEvents {
             }
         });
 
-        ServerWorldEvents.LOAD.register((server, world) -> {
-            ModPersistentState state = ModPersistentState.getServerState(server);
-
-            RitualProcedureHelper.setParticlePositions(state.particlePositions);
-
-            RitualProcedureHelper.particleTimerTicks = RitualProcedureHelper.PARTICLE_TIMER_MAX_TICKS;
-        });
+//        ServerWorldEvents.LOAD.register((server, world) -> {
+//            ModPersistentState state = ModPersistentState.getServerState(server);
+//
+//            RitualProcedureHelper.setParticlePositions(state.particlePositions);
+//
+//            RitualProcedureHelper.particleTimerTicks = RitualProcedureHelper.PARTICLE_TIMER_MAX_TICKS;
+//        });
     }
 }

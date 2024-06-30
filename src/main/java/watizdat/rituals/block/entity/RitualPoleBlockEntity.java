@@ -5,7 +5,10 @@ import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.SpawnReason;
+import net.minecraft.entity.effect.StatusEffectInstance;
+import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.particle.DustParticleEffect;
@@ -118,10 +121,13 @@ public class RitualPoleBlockEntity extends BlockEntity {
 
             ServerWorld serverWorld = player.getServer().getWorld(player.getWorld().getRegistryKey());
 
-            // TODO: Highlight the entity so the player always knows where they are
             Entity entity = entityType.spawn(serverWorld, pos, SpawnReason.MOB_SUMMONED);
 
             entity.setAttached(ModDataAttachments.getRitualPolePosPersistent(), new BlockPos(getPos().getX(), getPos().getY(), getPos().getZ()));
+
+            StatusEffectInstance statusEffectInstance = new StatusEffectInstance(
+                    StatusEffects.GLOWING, StatusEffectInstance.INFINITE, 0, false, false);
+            ((LivingEntity) entity).addStatusEffect(statusEffectInstance);
 
             entityUuids.add(entity.getUuid());
 

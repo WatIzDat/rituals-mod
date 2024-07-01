@@ -53,12 +53,14 @@ public class RitualPoleBlockEntity extends BlockEntity {
         markDirty();
 
         if (entityUuids.isEmpty()) {
-            stopRitual();
+            successRitual();
         }
     }
 
     public void startRitual(PlayerEntity player) {
         Rituals.LOGGER.info("Ritual started");
+
+        player.setAttached(ModDataAttachments.getRitualPolePosPersistent(), getPos());
 
         ritualState = RitualState.IN_PROGRESS;
 
@@ -144,12 +146,10 @@ public class RitualPoleBlockEntity extends BlockEntity {
         }
     }
 
-    public void stopRitual() {
+    public void successRitual() {
         ritualState = RitualState.SUCCESS;
 
-        timerStarted = false;
-
-        markDirty();
+        stopRitual();
     }
 
     public RitualState getRitualState() {
@@ -158,6 +158,26 @@ public class RitualPoleBlockEntity extends BlockEntity {
 
     public void resetRitualState() {
         ritualState = RitualState.NOT_STARTED;
+    }
+
+    public void failRitual() {
+        ritualState = RitualState.FAIL;
+
+        List<UUID> entityUuidsCopy = new ArrayList<>(entityUuids);
+
+        for (UUID uuid : entityUuidsCopy) {
+            getWorld().getServer().getWorld(getWorld().getRegistryKey()).getEntity(uuid).remove(Entity.RemovalReason.DISCARDED);
+        }
+
+        entityUuids.clear();
+
+        stopRitual();
+    }
+
+    private void stopRitual() {
+        timerStarted = false;
+
+        markDirty();
     }
 
     private static BlockPos canSpawn(Vec3d raycastStart, Vec3d raycastEnd, PlayerEntity player, EntityType<?> entityType) {

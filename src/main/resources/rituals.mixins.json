@@ -5,7 +5,8 @@
 	"mixins": [
 		"LivingEntityMixin",
 		"PassiveEntityMixin",
-		"MobEntityMixin"
+		"MobEntityMixin",
+		"ServerPlayerEntityMixin"
 	],
 	"injectors": {
 		"defaultRequire": 1

@@ -9,6 +9,7 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.SpawnReason;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.effect.StatusEffects;
+import net.minecraft.entity.passive.PassiveEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.particle.DustParticleEffect;
@@ -21,6 +22,7 @@ import net.minecraft.world.RaycastContext;
 import net.minecraft.world.World;
 import org.joml.Vector3d;
 import watizdat.rituals.Rituals;
+import watizdat.rituals.access.PassiveEntityMixinAccess;
 import watizdat.rituals.enums.RitualState;
 import watizdat.rituals.init.ModBlockEntityTypes;
 import watizdat.rituals.state.ModDataAttachments;
@@ -124,6 +126,10 @@ public class RitualPoleBlockEntity extends BlockEntity {
             Entity entity = entityType.spawn(serverWorld, pos, SpawnReason.MOB_SUMMONED);
 
             entity.setAttached(ModDataAttachments.getRitualPolePosPersistent(), new BlockPos(getPos().getX(), getPos().getY(), getPos().getZ()));
+
+            if (entity instanceof PassiveEntity) {
+                ((PassiveEntityMixinAccess) entity).rituals$addAttackGoals(world);
+            }
 
             StatusEffectInstance statusEffectInstance = new StatusEffectInstance(
                     StatusEffects.GLOWING, StatusEffectInstance.INFINITE, 0, false, false);

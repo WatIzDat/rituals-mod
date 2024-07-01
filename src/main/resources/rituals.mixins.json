@@ -6,7 +6,8 @@
 		"LivingEntityMixin",
 		"PassiveEntityMixin",
 		"MobEntityMixin",
-		"ServerPlayerEntityMixin"
+		"ServerPlayerEntityMixin",
+		"PlayerEntityMixin"
 	],
 	"injectors": {
 		"defaultRequire": 1

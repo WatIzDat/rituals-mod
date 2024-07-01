@@ -6,5 +6,7 @@
   "gui.rituals.ritual_pole.mobs_killed_message": "These are the mobs you have killed:",
   "gui.rituals.ritual_pole.revenge_warning_message": "These mobs will rise from the dead even stronger, ready to take revenge...",
   "gui.rituals.ritual_pole.cancel_button": "Cancel",
-  "gui.rituals.ritual_pole.start_ritual_button": "Start Ritual"
+  "gui.rituals.ritual_pole.start_ritual_button": "Start Ritual",
+  "death.attack.rituals.outside_ritual_circle": "%1$s tried to run away during a ritual",
+  "death.attack.rituals.outside_ritual_circle.player": "%1$s tried to run away from %2$s during a ritual"
 }

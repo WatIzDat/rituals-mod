@@ -35,6 +35,7 @@ import java.util.*;
 public class RitualPoleBlockEntity extends BlockEntity {
     private RitualState ritualState = RitualState.NOT_STARTED;
     private List<UUID> entityUuids = new ArrayList<>();
+    private UUID playerUuid = new UUID(0L, 0L);
     private List<Vector3d> particlePositions = new ArrayList<>();
 
     private static final long TIMER_MAX_TICKS = 20L;
@@ -60,6 +61,7 @@ public class RitualPoleBlockEntity extends BlockEntity {
     public void startRitual(PlayerEntity player) {
         Rituals.LOGGER.info("Ritual started");
 
+        playerUuid = player.getUuid();
         player.setAttached(ModDataAttachments.getRitualPolePosPersistent(), getPos());
 
         ritualState = RitualState.IN_PROGRESS;
@@ -176,6 +178,9 @@ public class RitualPoleBlockEntity extends BlockEntity {
     }
 
     private void stopRitual() {
+        getWorld().getPlayerByUuid(playerUuid).removeAttached(ModDataAttachments.getRitualPolePosPersistent());
+        playerUuid = new UUID(0L, 0L);
+
         timerStarted = false;
 
         markDirty();
@@ -238,6 +243,10 @@ public class RitualPoleBlockEntity extends BlockEntity {
         }
     }
 
+    public boolean isOutsideCircle(double x, double z) {
+        return (x - getPos().getX())*(x - getPos().getX()) + (z - getPos().getZ())*(z - getPos().getZ()) > RADIUS*RADIUS;
+    }
+
     @Override
     public void readNbt(NbtCompound nbt) {
         super.readNbt(nbt);
@@ -254,6 +263,8 @@ public class RitualPoleBlockEntity extends BlockEntity {
         });
 
         ritualState = Enum.valueOf(RitualState.class, nbt.getString("ritualState"));
+
+        playerUuid = nbt.getUuid("playerUuid");
     }
 
     @Override
@@ -269,6 +280,8 @@ public class RitualPoleBlockEntity extends BlockEntity {
         nbt.put("entityUuids", entityUuidsNbt);
 
         nbt.putString("ritualState", ritualState.toString());
+
+        nbt.putUuid("playerUuid", playerUuid);
 
         super.writeNbt(nbt);
     }

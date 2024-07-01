@@ -22,6 +22,7 @@ import net.minecraft.world.RaycastContext;
 import net.minecraft.world.World;
 import org.joml.Vector3d;
 import watizdat.rituals.Rituals;
+import watizdat.rituals.access.MobEntityMixinAccess;
 import watizdat.rituals.access.PassiveEntityMixinAccess;
 import watizdat.rituals.enums.RitualState;
 import watizdat.rituals.init.ModBlockEntityTypes;
@@ -130,6 +131,8 @@ public class RitualPoleBlockEntity extends BlockEntity {
             if (entity instanceof PassiveEntity) {
                 ((PassiveEntityMixinAccess) entity).rituals$addAttackGoals(world);
             }
+
+            ((MobEntityMixinAccess) entity).rituals$addSpeedModifier();
 
             StatusEffectInstance statusEffectInstance = new StatusEffectInstance(
                     StatusEffects.GLOWING, StatusEffectInstance.INFINITE, 0, false, false);

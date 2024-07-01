@@ -135,6 +135,7 @@ public class RitualPoleBlockEntity extends BlockEntity {
             }
 
             ((MobEntityMixinAccess) entity).rituals$addSpeedModifier();
+            ((MobEntityMixinAccess) entity).rituals$preventDespawning();
 
             StatusEffectInstance statusEffectInstance = new StatusEffectInstance(
                     StatusEffects.GLOWING, StatusEffectInstance.INFINITE, 0, false, false);

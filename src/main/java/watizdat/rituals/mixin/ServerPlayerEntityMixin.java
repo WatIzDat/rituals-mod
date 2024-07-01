@@ -22,8 +22,6 @@ public abstract class ServerPlayerEntityMixin extends PlayerEntity {
 
     @Inject(at = @At("TAIL"), method = "onDeath")
     private void rituals$onDeath(CallbackInfo info) {
-        System.out.println("test");
-
         if (hasAttached(ModDataAttachments.getRitualPolePosPersistent())) {
             BlockPos ritualPolePos = getAttached(ModDataAttachments.getRitualPolePosPersistent());
 

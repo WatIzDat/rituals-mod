@@ -10,6 +10,7 @@ import net.minecraft.entity.SpawnReason;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.entity.mob.PathAwareEntity;
+import net.minecraft.entity.mob.SlimeEntity;
 import net.minecraft.entity.passive.PassiveEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.NbtCompound;
@@ -26,9 +27,9 @@ import watizdat.rituals.Rituals;
 import watizdat.rituals.access.MobEntityMixinAccess;
 import watizdat.rituals.access.PassiveEntityMixinAccess;
 import watizdat.rituals.access.PathAwareEntityMixinAccess;
+import watizdat.rituals.access.SlimeEntityMixinAccess;
 import watizdat.rituals.enums.RitualState;
 import watizdat.rituals.init.ModBlockEntityTypes;
-import watizdat.rituals.mixin.PathAwareEntityMixin;
 import watizdat.rituals.state.ModDataAttachments;
 import watizdat.rituals.state.ModPersistentState;
 import watizdat.rituals.state.ModPlayerData;
@@ -144,6 +145,10 @@ public class RitualPoleBlockEntity extends BlockEntity {
 
             if (entity instanceof PathAwareEntity) {
                 ((PathAwareEntityMixinAccess) entity).rituals$addGeneralGoals();
+            }
+
+            if (entity instanceof SlimeEntity) {
+                ((SlimeEntityMixinAccess) entity).rituals$setAsAggressive();
             }
 
             StatusEffectInstance statusEffectInstance = new StatusEffectInstance(

@@ -9,6 +9,7 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.SpawnReason;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.effect.StatusEffects;
+import net.minecraft.entity.mob.PathAwareEntity;
 import net.minecraft.entity.passive.PassiveEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.NbtCompound;
@@ -24,8 +25,10 @@ import org.joml.Vector3d;
 import watizdat.rituals.Rituals;
 import watizdat.rituals.access.MobEntityMixinAccess;
 import watizdat.rituals.access.PassiveEntityMixinAccess;
+import watizdat.rituals.access.PathAwareEntityMixinAccess;
 import watizdat.rituals.enums.RitualState;
 import watizdat.rituals.init.ModBlockEntityTypes;
+import watizdat.rituals.mixin.PathAwareEntityMixin;
 import watizdat.rituals.state.ModDataAttachments;
 import watizdat.rituals.state.ModPersistentState;
 import watizdat.rituals.state.ModPlayerData;
@@ -139,6 +142,10 @@ public class RitualPoleBlockEntity extends BlockEntity {
             ((MobEntityMixinAccess) entity).rituals$addSpeedModifier();
             ((MobEntityMixinAccess) entity).rituals$preventDespawning();
 
+            if (entity instanceof PathAwareEntity) {
+                ((PathAwareEntityMixinAccess) entity).rituals$addGeneralGoals();
+            }
+
             StatusEffectInstance statusEffectInstance = new StatusEffectInstance(
                     StatusEffects.GLOWING, StatusEffectInstance.INFINITE, 0, false, false);
             ((LivingEntity) entity).addStatusEffect(statusEffectInstance);
@@ -168,11 +175,11 @@ public class RitualPoleBlockEntity extends BlockEntity {
 
         List<UUID> entityUuidsCopy = new ArrayList<>(entityUuids);
 
+        entityUuids.clear();
+
         for (UUID uuid : entityUuidsCopy) {
             getWorld().getServer().getWorld(getWorld().getRegistryKey()).getEntity(uuid).remove(Entity.RemovalReason.DISCARDED);
         }
-
-        entityUuids.clear();
 
         stopRitual();
     }

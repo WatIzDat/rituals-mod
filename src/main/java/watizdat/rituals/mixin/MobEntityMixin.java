@@ -2,26 +2,29 @@ package watizdat.rituals.mixin;
 
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.ai.goal.GoalSelector;
+import net.minecraft.entity.ai.goal.LookAroundGoal;
+import net.minecraft.entity.ai.goal.LookAtEntityGoal;
 import net.minecraft.entity.attribute.DefaultAttributeContainer;
 import net.minecraft.entity.attribute.EntityAttributeModifier;
 import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.entity.mob.MobEntity;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.world.Difficulty;
 import net.minecraft.world.World;
-import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Overwrite;
-import org.spongepowered.asm.mixin.Shadow;
-import org.spongepowered.asm.mixin.Unique;
+import org.spongepowered.asm.mixin.*;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import watizdat.rituals.access.MobEntityMixinAccess;
+import watizdat.rituals.entity.goal.MoveToRitualPoleGoal;
 
 @Mixin(MobEntity.class)
 public abstract class MobEntityMixin extends LivingEntity implements MobEntityMixinAccess {
     @Shadow protected abstract boolean isDisallowedInPeaceful();
 
+    @Shadow @Final protected GoalSelector goalSelector;
     @Unique
     private boolean preventDespawning;
 
@@ -38,6 +41,17 @@ public abstract class MobEntityMixin extends LivingEntity implements MobEntityMi
                     EntityAttributeModifier.Operation.MULTIPLY_BASE
             ));
         }
+
+        if (getAttributes().hasAttribute(EntityAttributes.GENERIC_FOLLOW_RANGE)) {
+            getAttributeInstance(EntityAttributes.GENERIC_FOLLOW_RANGE).addPersistentModifier(new EntityAttributeModifier(
+                    "Entity follow range",
+                    10_000,
+                    EntityAttributeModifier.Operation.ADDITION
+            ));
+        }
+
+//        goalSelector.add(1, new LookAtEntityGoal((MobEntity) (Object) this, PlayerEntity.class, 2048f));
+//        goalSelector.add(1, new LookAroundGoal((MobEntity) (Object) this));
     }
 
     @Override

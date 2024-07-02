@@ -9,6 +9,7 @@
 		"PathAwareEntityMixin",
 		"PlayerEntityMixin",
 		"ServerPlayerEntityMixin",
+		"SlimeEntity$FaceTowardTargetGoalMixin",
 		"SlimeEntityMixin"
 	],
 	"injectors": {

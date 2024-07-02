@@ -140,7 +140,7 @@ public class RitualPoleBlockEntity extends BlockEntity {
                 ((PassiveEntityMixinAccess) entity).rituals$addAttackGoals(world);
             }
 
-            ((MobEntityMixinAccess) entity).rituals$addSpeedModifier();
+            ((MobEntityMixinAccess) entity).rituals$addRitualModifiers();
             ((MobEntityMixinAccess) entity).rituals$preventDespawning();
 
             if (entity instanceof PathAwareEntity) {

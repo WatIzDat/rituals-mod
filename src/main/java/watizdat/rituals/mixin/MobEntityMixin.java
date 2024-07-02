@@ -33,7 +33,7 @@ public abstract class MobEntityMixin extends LivingEntity implements MobEntityMi
     }
 
     @Override
-    public void rituals$addSpeedModifier() {
+    public void rituals$addRitualModifiers() {
         if (getAttributes().hasAttribute(EntityAttributes.GENERIC_MOVEMENT_SPEED)) {
             getAttributeInstance(EntityAttributes.GENERIC_MOVEMENT_SPEED).addPersistentModifier(new EntityAttributeModifier(
                     "Entity movement speed",
@@ -49,9 +49,6 @@ public abstract class MobEntityMixin extends LivingEntity implements MobEntityMi
                     EntityAttributeModifier.Operation.ADDITION
             ));
         }
-
-//        goalSelector.add(1, new LookAtEntityGoal((MobEntity) (Object) this, PlayerEntity.class, 2048f));
-//        goalSelector.add(1, new LookAroundGoal((MobEntity) (Object) this));
     }
 
     @Override

@@ -28,10 +28,10 @@ public abstract class PassiveEntityMixin extends PathAwareEntity implements Pass
         if (world != null && !world.isClient) {
             goalSelector.clear(goal -> true);
 
-            goalSelector.add(101, new LookAtEntityGoal(this, PlayerEntity.class, 8f));
-            goalSelector.add(101, new LookAroundGoal(this));
-            goalSelector.add(100, new MeleeAttackGoal(this, 1d, false));
-            targetSelector.add(100, new ActiveTargetGoal<>(this, PlayerEntity.class, false));
+            goalSelector.add(2, new LookAtEntityGoal(this, PlayerEntity.class, 8f));
+            goalSelector.add(2, new LookAroundGoal(this));
+            goalSelector.add(1, new MeleeAttackGoal(this, 1d, false));
+            targetSelector.add(1, new ActiveTargetGoal<>(this, PlayerEntity.class, false));
         }
     }
 }

@@ -16,7 +16,6 @@ public abstract class PathAwareEntityMixin extends MobEntity implements PathAwar
 
     @Override
     public void rituals$addGeneralGoals() {
-        System.out.println("test");
-        goalSelector.add(102, new MoveToRitualPoleGoal((PathAwareEntity) (Object) this, 1.1, 10));
+        goalSelector.add(3, new MoveToRitualPoleGoal((PathAwareEntity) (Object) this, 1.1, 10));
     }
 }

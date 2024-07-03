@@ -2,14 +2,10 @@ package watizdat.rituals.mixin;
 
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.ai.goal.GoalSelector;
-import net.minecraft.entity.ai.goal.LookAroundGoal;
-import net.minecraft.entity.ai.goal.LookAtEntityGoal;
 import net.minecraft.entity.attribute.DefaultAttributeContainer;
 import net.minecraft.entity.attribute.EntityAttributeModifier;
 import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.entity.mob.MobEntity;
-import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.world.Difficulty;
 import net.minecraft.world.World;
 import org.spongepowered.asm.mixin.*;
@@ -18,13 +14,11 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import watizdat.rituals.access.MobEntityMixinAccess;
-import watizdat.rituals.entity.goal.MoveToRitualPoleGoal;
 
 @Mixin(MobEntity.class)
 public abstract class MobEntityMixin extends LivingEntity implements MobEntityMixinAccess {
     @Shadow protected abstract boolean isDisallowedInPeaceful();
 
-    @Shadow @Final protected GoalSelector goalSelector;
     @Unique
     private boolean preventDespawning;
 
@@ -37,6 +31,14 @@ public abstract class MobEntityMixin extends LivingEntity implements MobEntityMi
         if (getAttributes().hasAttribute(EntityAttributes.GENERIC_MOVEMENT_SPEED)) {
             getAttributeInstance(EntityAttributes.GENERIC_MOVEMENT_SPEED).addPersistentModifier(new EntityAttributeModifier(
                     "Entity movement speed",
+                    1.5d,
+                    EntityAttributeModifier.Operation.MULTIPLY_BASE
+            ));
+        }
+
+        if (getAttributes().hasAttribute(EntityAttributes.GENERIC_FLYING_SPEED)) {
+            getAttributeInstance(EntityAttributes.GENERIC_FLYING_SPEED).addPersistentModifier(new EntityAttributeModifier(
+                    "Entity flying speed",
                     1.5d,
                     EntityAttributeModifier.Operation.MULTIPLY_BASE
             ));

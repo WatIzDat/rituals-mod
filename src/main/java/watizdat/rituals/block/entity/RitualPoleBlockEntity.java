@@ -1,5 +1,6 @@
 package watizdat.rituals.block.entity;
 
+import com.google.common.collect.ImmutableList;
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
@@ -7,10 +8,16 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.SpawnReason;
+import net.minecraft.entity.ai.brain.Activity;
+import net.minecraft.entity.ai.brain.task.AttackTask;
+import net.minecraft.entity.ai.brain.task.LookAtMobTask;
+import net.minecraft.entity.ai.brain.task.MeleeAttackTask;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.effect.StatusEffects;
+import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.entity.mob.PathAwareEntity;
 import net.minecraft.entity.mob.SlimeEntity;
+import net.minecraft.entity.passive.AllayEntity;
 import net.minecraft.entity.passive.PassiveEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.NbtCompound;
@@ -24,10 +31,7 @@ import net.minecraft.world.RaycastContext;
 import net.minecraft.world.World;
 import org.joml.Vector3d;
 import watizdat.rituals.Rituals;
-import watizdat.rituals.access.MobEntityMixinAccess;
-import watizdat.rituals.access.PassiveEntityMixinAccess;
-import watizdat.rituals.access.PathAwareEntityMixinAccess;
-import watizdat.rituals.access.SlimeEntityMixinAccess;
+import watizdat.rituals.access.*;
 import watizdat.rituals.enums.RitualState;
 import watizdat.rituals.init.ModBlockEntityTypes;
 import watizdat.rituals.state.ModDataAttachments;
@@ -136,6 +140,12 @@ public class RitualPoleBlockEntity extends BlockEntity {
 
             entity.setAttached(ModDataAttachments.getRitualPolePosPersistent(), new BlockPos(getPos().getX(), getPos().getY(), getPos().getZ()));
 
+//            ((LivingEntity) entity).getBrain().setTaskList(Activity.CORE, 0, ImmutableList.of(
+//                    MeleeAttackTask.create(10)
+//            ));
+
+//            ((BrainMixinAccess) ((LivingEntity) entity).getBrain()).rituals$setRitualsTaskList();
+
             if (entity instanceof PassiveEntity) {
                 ((PassiveEntityMixinAccess) entity).rituals$addAttackGoals(world);
             }
@@ -144,7 +154,7 @@ public class RitualPoleBlockEntity extends BlockEntity {
             ((MobEntityMixinAccess) entity).rituals$preventDespawning();
 
             if (entity instanceof PathAwareEntity) {
-                ((PathAwareEntityMixinAccess) entity).rituals$addGeneralGoals();
+                ((PathAwareEntityMixinAccess) entity).rituals$addGeneralGoals(world);
             }
 
             if (entity instanceof SlimeEntity) {

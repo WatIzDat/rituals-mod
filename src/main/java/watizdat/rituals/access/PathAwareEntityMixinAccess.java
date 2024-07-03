@@ -1,5 +1,7 @@
 package watizdat.rituals.access;
 
+import net.minecraft.world.World;
+
 public interface PathAwareEntityMixinAccess {
-    void rituals$addGeneralGoals();
+    void rituals$addGeneralGoals(World world);
 }

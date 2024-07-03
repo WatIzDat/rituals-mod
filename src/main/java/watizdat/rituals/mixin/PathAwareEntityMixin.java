@@ -1,8 +1,15 @@
 package watizdat.rituals.mixin;
 
 import net.minecraft.entity.EntityType;
+import net.minecraft.entity.ai.goal.ActiveTargetGoal;
+import net.minecraft.entity.ai.goal.LookAroundGoal;
+import net.minecraft.entity.ai.goal.LookAtEntityGoal;
+import net.minecraft.entity.ai.goal.MeleeAttackGoal;
+import net.minecraft.entity.attribute.EntityAttributeModifier;
+import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.entity.mob.PathAwareEntity;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.world.World;
 import org.spongepowered.asm.mixin.Mixin;
 import watizdat.rituals.access.PathAwareEntityMixinAccess;
@@ -15,7 +22,24 @@ public abstract class PathAwareEntityMixin extends MobEntity implements PathAwar
     }
 
     @Override
-    public void rituals$addGeneralGoals() {
+    public void rituals$addGeneralGoals(World world) {
         goalSelector.add(3, new MoveToRitualPoleGoal((PathAwareEntity) (Object) this, 1.1, 10));
+
+//        System.out.println(getClass().getPackageName());
+//
+        getAttributeInstance(EntityAttributes.GENERIC_ATTACK_DAMAGE).addPersistentModifier(new EntityAttributeModifier(
+                "Entity attack damage",
+                getMaxHealth() / 2,
+                EntityAttributeModifier.Operation.ADDITION
+        ));
+
+        if (world != null && !world.isClient) {
+            goalSelector.clear(goal -> true);
+
+            goalSelector.add(2, new LookAtEntityGoal(this, PlayerEntity.class, 8f));
+            goalSelector.add(2, new LookAroundGoal(this));
+            goalSelector.add(1, new MeleeAttackGoal((PathAwareEntity) (Object) this, 1d, false));
+            targetSelector.add(1, new ActiveTargetGoal<>(this, PlayerEntity.class, false));
+        }
     }
 }

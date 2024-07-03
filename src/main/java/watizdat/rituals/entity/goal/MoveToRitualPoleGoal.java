@@ -10,7 +10,7 @@ import java.util.EnumSet;
 
 public class MoveToRitualPoleGoal extends MoveToTargetPosGoal {
     public MoveToRitualPoleGoal(PathAwareEntity mob, double speed, int range) {
-        super(mob, speed, range, 10);
+        super(mob, speed, range, 50);
         setControls(EnumSet.of(Control.JUMP, Control.MOVE));
     }
 

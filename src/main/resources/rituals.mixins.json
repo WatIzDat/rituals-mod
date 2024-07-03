@@ -3,10 +3,8 @@
 	"package": "watizdat.rituals.mixin",
 	"compatibilityLevel": "JAVA_17",
 	"mixins": [
-		"BrainMixin",
 		"LivingEntityMixin",
 		"MobEntityMixin",
-		"PassiveEntityMixin",
 		"PathAwareEntityMixin",
 		"PlayerEntityMixin",
 		"ServerPlayerEntityMixin",

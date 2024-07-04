@@ -11,6 +11,7 @@ import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.entity.mob.PathAwareEntity;
 import net.minecraft.entity.mob.SlimeEntity;
+import net.minecraft.entity.passive.BatEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.particle.DustParticleEffect;
@@ -141,6 +142,10 @@ public class RitualPoleBlockEntity extends BlockEntity {
 
             if (entity instanceof SlimeEntity) {
                 ((SlimeEntityMixinAccess) entity).rituals$setAsAggressive();
+            }
+
+            if (entity instanceof BatEntity) {
+                ((BatEntityMixinAccess) entity).rituals$setAsAggressive();
             }
 
             StatusEffectInstance statusEffectInstance = new StatusEffectInstance(

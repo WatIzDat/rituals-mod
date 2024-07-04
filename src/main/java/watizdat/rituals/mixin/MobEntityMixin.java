@@ -47,7 +47,7 @@ public abstract class MobEntityMixin extends LivingEntity implements MobEntityMi
         if (getAttributes().hasAttribute(EntityAttributes.GENERIC_FOLLOW_RANGE)) {
             getAttributeInstance(EntityAttributes.GENERIC_FOLLOW_RANGE).addPersistentModifier(new EntityAttributeModifier(
                     "Entity follow range",
-                    10_000,
+                    100d,
                     EntityAttributeModifier.Operation.ADDITION
             ));
         }
@@ -73,6 +73,9 @@ public abstract class MobEntityMixin extends LivingEntity implements MobEntityMi
 
     @Inject(at = @At("RETURN"), method = "createMobAttributes", cancellable = true)
     private static void rituals$createMobAttributes(CallbackInfoReturnable<DefaultAttributeContainer.Builder> info) {
-        info.setReturnValue(info.getReturnValue().add(EntityAttributes.GENERIC_ATTACK_DAMAGE, 0d));
+        info.setReturnValue(info.getReturnValue()
+                .add(EntityAttributes.GENERIC_ATTACK_DAMAGE, 0d)
+                .add(EntityAttributes.GENERIC_FLYING_SPEED, 0d)
+                .add(EntityAttributes.GENERIC_MOVEMENT_SPEED, 0d));
     }
 }

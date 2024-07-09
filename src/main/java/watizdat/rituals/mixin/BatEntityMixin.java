@@ -6,9 +6,11 @@ import net.minecraft.entity.EntityType;
 import net.minecraft.entity.ai.control.FlightMoveControl;
 import net.minecraft.entity.ai.pathing.BirdNavigation;
 import net.minecraft.entity.ai.pathing.EntityNavigation;
+import net.minecraft.entity.attribute.DefaultAttributeContainer;
 import net.minecraft.entity.attribute.EntityAttributeModifier;
 import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.entity.mob.AmbientEntity;
+import net.minecraft.entity.mob.PathAwareEntity;
 import net.minecraft.entity.passive.BatEntity;
 import net.minecraft.world.World;
 import org.spongepowered.asm.mixin.Mixin;
@@ -19,6 +21,8 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import watizdat.rituals.access.BatEntityMixinAccess;
+
+import java.util.UUID;
 
 @Mixin(BatEntity.class)
 public abstract class BatEntityMixin extends AmbientEntity implements BatEntityMixinAccess {
@@ -33,7 +37,7 @@ public abstract class BatEntityMixin extends AmbientEntity implements BatEntityM
 
     @Override
     protected EntityNavigation createNavigation(World world) {
-        BirdNavigation birdNavigation = new BirdNavigation(this, world);
+        BirdNavigation birdNavigation = new BirdNavigation((PathAwareEntity) (Object) this, world);
         birdNavigation.setCanPathThroughDoors(false);
         birdNavigation.setCanSwim(true);
         birdNavigation.setCanEnterOpenDoors(true);
@@ -45,17 +49,26 @@ public abstract class BatEntityMixin extends AmbientEntity implements BatEntityM
         isAggressive = true;
 
         getAttributeInstance(EntityAttributes.GENERIC_FLYING_SPEED).addPersistentModifier(new EntityAttributeModifier(
+//                UUID.fromString("3bacfbde-7726-4b4e-ac63-4b9743290757"),
                 "Bat flying speed",
-                1d,
+                0.6,
                 EntityAttributeModifier.Operation.ADDITION
         ));
 
         getAttributeInstance(EntityAttributes.GENERIC_MOVEMENT_SPEED).addPersistentModifier(new EntityAttributeModifier(
+//                UUID.fromString("b258dbdb-f50d-4c5a-813b-2ad7e20252ac"),
                 "Bat movement speed",
-                1d,
+                0.3,
                 EntityAttributeModifier.Operation.ADDITION
         ));
     }
+
+//    @Inject(at = @At("RETURN"), method = "createBatAttributes", cancellable = true)
+//    private static void rituals$createBatAttributes(CallbackInfoReturnable<DefaultAttributeContainer.Builder> info) {
+//        info.setReturnValue(info.getReturnValue()
+//                .add(EntityAttributes.GENERIC_FLYING_SPEED, 0.1d)
+//                .add(EntityAttributes.GENERIC_MOVEMENT_SPEED, 0.1d));
+//    }
 
     @Inject(at = @At("TAIL"), method = "<init>")
     private void rituals$init(CallbackInfo info, @Local(argsOnly = true) World world) {
@@ -63,7 +76,7 @@ public abstract class BatEntityMixin extends AmbientEntity implements BatEntityM
             setRoosting(false);
         }
 
-        moveControl = new FlightMoveControl(this, 10, true);
+        moveControl = new FlightMoveControl((PathAwareEntity) (Object) this, 20, true);
     }
 
     @Inject(at = @At("HEAD"), method = "mobTick", cancellable = true)

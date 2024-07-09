@@ -133,6 +133,13 @@ public class RitualPoleBlockEntity extends BlockEntity {
 
             entity.setAttached(ModDataAttachments.getRitualPolePosPersistent(), new BlockPos(getPos().getX(), getPos().getY(), getPos().getZ()));
 
+//            ((MobEntityMixinAccess) entity).rituals$addRitualModifiers();
+//            ((MobEntityMixinAccess) entity).rituals$preventDespawning();
+
+            if (entity instanceof BatEntity) {
+                ((BatEntityMixinAccess) entity).rituals$setAsAggressive();
+            }
+
             ((MobEntityMixinAccess) entity).rituals$addRitualModifiers();
             ((MobEntityMixinAccess) entity).rituals$preventDespawning();
 
@@ -144,9 +151,12 @@ public class RitualPoleBlockEntity extends BlockEntity {
                 ((SlimeEntityMixinAccess) entity).rituals$setAsAggressive();
             }
 
-            if (entity instanceof BatEntity) {
-                ((BatEntityMixinAccess) entity).rituals$setAsAggressive();
-            }
+//            if (entity instanceof BatEntity) {
+//                ((BatEntityMixinAccess) entity).rituals$setAsAggressive();
+//            }
+
+//            ((MobEntityMixinAccess) entity).rituals$addRitualModifiers();
+//            ((MobEntityMixinAccess) entity).rituals$preventDespawning();
 
             StatusEffectInstance statusEffectInstance = new StatusEffectInstance(
                     StatusEffects.GLOWING, StatusEffectInstance.INFINITE, 0, false, false);

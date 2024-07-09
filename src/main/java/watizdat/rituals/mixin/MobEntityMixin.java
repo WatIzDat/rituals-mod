@@ -5,6 +5,7 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.attribute.DefaultAttributeContainer;
 import net.minecraft.entity.attribute.EntityAttributeModifier;
 import net.minecraft.entity.attribute.EntityAttributes;
+import net.minecraft.entity.mob.AmbientEntity;
 import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.world.Difficulty;
 import net.minecraft.world.World;
@@ -32,7 +33,7 @@ public abstract class MobEntityMixin extends LivingEntity implements MobEntityMi
             getAttributeInstance(EntityAttributes.GENERIC_MOVEMENT_SPEED).addPersistentModifier(new EntityAttributeModifier(
                     "Entity movement speed",
                     1.5d,
-                    EntityAttributeModifier.Operation.MULTIPLY_BASE
+                    EntityAttributeModifier.Operation.MULTIPLY_TOTAL
             ));
         }
 
@@ -40,7 +41,7 @@ public abstract class MobEntityMixin extends LivingEntity implements MobEntityMi
             getAttributeInstance(EntityAttributes.GENERIC_FLYING_SPEED).addPersistentModifier(new EntityAttributeModifier(
                     "Entity flying speed",
                     1.5d,
-                    EntityAttributeModifier.Operation.MULTIPLY_BASE
+                    EntityAttributeModifier.Operation.MULTIPLY_TOTAL
             ));
         }
 

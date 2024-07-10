@@ -23,8 +23,8 @@ import watizdat.rituals.block.entity.RitualPoleBlockEntity;
 import watizdat.rituals.enums.RitualState;
 import watizdat.rituals.init.ModBlockEntityTypes;
 import watizdat.rituals.network.ModNetworkConstants;
-import watizdat.rituals.state.ModPersistentState;
-import watizdat.rituals.state.ModPlayerData;
+import watizdat.rituals.state.ModComponents;
+import watizdat.rituals.state.component.EntityTypesKilledComponent;
 
 public class RitualPoleBlock extends BlockWithEntity {
     public static final EnumProperty<DoubleBlockHalf> HALF = EnumProperty.of("half", DoubleBlockHalf.class);
@@ -40,10 +40,12 @@ public class RitualPoleBlock extends BlockWithEntity {
             return ActionResult.SUCCESS;
         }
 
-        ModPlayerData playerState = ModPersistentState.getPlayerState(player);
+//        ModPlayerData playerState = ModPersistentState.getPlayerState(player);
+
+        EntityTypesKilledComponent entityTypesKilled = ModComponents.ENTITY_TYPES_KILLED_COMPONENT.get(player);
 
         PacketByteBuf buf = PacketByteBufs.create();
-        buf.writeCollection(playerState.entityTypesKilled.stream().map(EntityType::getId).toList(), PacketByteBuf::writeIdentifier);
+        buf.writeCollection(entityTypesKilled.getValue().stream().map(EntityType::getId).toList(), PacketByteBuf::writeIdentifier);
         buf.writeBlockPos(pos);
 
         RitualState ritualState = ((RitualPoleBlockEntity) world.getBlockEntity(pos)).getRitualState();

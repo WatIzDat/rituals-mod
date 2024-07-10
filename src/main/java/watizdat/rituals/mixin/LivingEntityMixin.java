@@ -18,9 +18,8 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import watizdat.rituals.block.entity.RitualPoleBlockEntity;
 import watizdat.rituals.network.ModNetworkConstants;
-import watizdat.rituals.state.ModDataAttachments;
-import watizdat.rituals.state.ModPersistentState;
-import watizdat.rituals.state.ModPlayerData;
+import watizdat.rituals.state.ModComponents;
+import watizdat.rituals.state.component.EntityTypesKilledComponent;
 
 @Mixin(LivingEntity.class)
 public abstract class LivingEntityMixin extends Entity {
@@ -33,17 +32,22 @@ public abstract class LivingEntityMixin extends Entity {
 	@Inject(at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/damage/DamageSource;getAttacker()Lnet/minecraft/entity/Entity;"), method = "onDeath")
 	private void rituals$onDeath(CallbackInfo info) {
 		if (!getWorld().isClient) {
-			if (hasAttached(ModDataAttachments.getRitualPolePosPersistent())) {
-				BlockPos ritualPolePos = getAttached(ModDataAttachments.getRitualPolePosPersistent());
+			if (ModComponents.RITUAL_POLE_POS_COMPONENT.get(this).isPresent()) {
+//				BlockPos ritualPolePos = getAttached(ModDataAttachments.getRitualPolePosPersistent());
 
-				((RitualPoleBlockEntity) getWorld().getBlockEntity(ritualPolePos)).removeEntityUuid(getUuid());
+//				((RitualPoleBlockEntity) getWorld().getBlockEntity(ritualPolePos)).removeEntityUuid(getUuid());
+				ModComponents.RITUAL_POLE_POS_COMPONENT.get(this).getBlockEntity(getWorld()).removeEntityUuid(getUuid());
 			} else if (getAttacker() != null && getAttacker().isPlayer()) {
-				ModPlayerData playerState = ModPersistentState.getPlayerState(getAttacker());
-				playerState.entityTypesKilled.add(getType());
+//				ModPlayerData playerState = ModPersistentState.getPlayerState(getAttacker());
+//				playerState.entityTypesKilled.add(getType());
+
+				EntityTypesKilledComponent entityTypesKilled = ModComponents.ENTITY_TYPES_KILLED_COMPONENT.get(getAttacker());
+
+				entityTypesKilled.add(getType());
 
 				MinecraftServer server = getWorld().getServer();
 				PacketByteBuf buf = PacketByteBufs.create();
-				buf.writeCollection(playerState.entityTypesKilled.stream().map(EntityType::getId).toList(), PacketByteBuf::writeIdentifier);
+				buf.writeCollection(entityTypesKilled.getValue().stream().map(EntityType::getId).toList(), PacketByteBuf::writeIdentifier);
 
 				ServerPlayerEntity playerEntity = server.getPlayerManager().getPlayer(getAttacker().getUuid());
 				server.execute(() -> {

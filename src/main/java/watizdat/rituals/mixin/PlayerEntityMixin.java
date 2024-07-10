@@ -16,7 +16,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import watizdat.rituals.block.entity.RitualPoleBlockEntity;
 import watizdat.rituals.init.ModDamageTypes;
-import watizdat.rituals.state.ModDataAttachments;
+import watizdat.rituals.state.ModComponents;
 
 @Mixin(PlayerEntity.class)
 public abstract class PlayerEntityMixin extends LivingEntity {
@@ -28,10 +28,10 @@ public abstract class PlayerEntityMixin extends LivingEntity {
 
     @Inject(at = @At("TAIL"), method = "tickMovement")
     private void rituals$tickMovement(CallbackInfo info) {
-        if (hasAttached(ModDataAttachments.getRitualPolePosPersistent())) {
-            BlockPos ritualPolePos = getAttached(ModDataAttachments.getRitualPolePosPersistent());
+        if (ModComponents.RITUAL_POLE_POS_COMPONENT.get(this).isPresent()) {
+//            BlockPos ritualPolePos = getAttached(ModDataAttachments.getRitualPolePosPersistent());
 
-            if (((RitualPoleBlockEntity) getWorld().getBlockEntity(ritualPolePos)).isOutsideCircle(getPos().getX(), getPos().getZ())) {
+            if (ModComponents.RITUAL_POLE_POS_COMPONENT.get(this).getBlockEntity(getWorld()).isOutsideCircle(getPos().getX(), getPos().getZ())) {
                 damage(ModDamageTypes.of(getWorld(), ModDamageTypes.OUTSIDE_RITUAL_CIRCLE), 10f);
             }
         }

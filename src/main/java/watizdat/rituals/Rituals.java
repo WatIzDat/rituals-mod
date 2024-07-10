@@ -6,7 +6,6 @@ import net.minecraft.util.Identifier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import watizdat.rituals.init.*;
-import watizdat.rituals.state.ModDataAttachments;
 
 public class Rituals implements ModInitializer {
     public static final String MOD_ID = "rituals";
@@ -25,6 +24,5 @@ public class Rituals implements ModInitializer {
         ModFeatures.init();
         ModEvents.init();
         ModServerReceivers.init();
-        ModDataAttachments.init();
     }
 }

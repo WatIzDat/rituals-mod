@@ -23,6 +23,9 @@
 		],
 		"preLaunch": [
 			"watizdat.rituals.RitualsPreLaunch"
+		],
+		"cardinal-components": [
+			"watizdat.rituals.state.ModComponents"
 		]
 	},
 	"mixins": [
@@ -40,5 +43,11 @@
 	},
 	"suggests": {
 		"another-mod": "*"
+	},
+	"custom": {
+		"cardinal-components": [
+			"rituals:entity_types_killed",
+			"rituals:ritual_pole_pos"
+		]
 	}
 }

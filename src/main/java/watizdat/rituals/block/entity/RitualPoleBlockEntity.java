@@ -27,9 +27,8 @@ import watizdat.rituals.Rituals;
 import watizdat.rituals.access.*;
 import watizdat.rituals.enums.RitualState;
 import watizdat.rituals.init.ModBlockEntityTypes;
-import watizdat.rituals.state.ModDataAttachments;
-import watizdat.rituals.state.ModPersistentState;
-import watizdat.rituals.state.ModPlayerData;
+import watizdat.rituals.state.ModComponents;
+import watizdat.rituals.state.component.EntityTypesKilledComponent;
 
 import java.util.*;
 
@@ -63,7 +62,8 @@ public class RitualPoleBlockEntity extends BlockEntity {
         Rituals.LOGGER.info("Ritual started");
 
         playerUuid = player.getUuid();
-        player.setAttached(ModDataAttachments.getRitualPolePosPersistent(), getPos());
+//        player.setAttached(ModDataAttachments.getRitualPolePosPersistent(), getPos());
+        ModComponents.RITUAL_POLE_POS_COMPONENT.get(player).set(getPos());
 
         ritualState = RitualState.IN_PROGRESS;
 
@@ -76,9 +76,9 @@ public class RitualPoleBlockEntity extends BlockEntity {
             setParticlePositions();
         }
 
-        ModPlayerData playerState = ModPersistentState.getPlayerState(player);
+        EntityTypesKilledComponent entityTypesKilled = ModComponents.ENTITY_TYPES_KILLED_COMPONENT.get(player);
 
-        for (EntityType<?> entityType : playerState.entityTypesKilled) {
+        for (EntityType<?> entityType : entityTypesKilled.getValue()) {
             List<BlockPos> validSpawnPositions = new ArrayList<>();
             Set<Pair<Integer, Integer>> duplicates = new HashSet<>();
 
@@ -131,7 +131,8 @@ public class RitualPoleBlockEntity extends BlockEntity {
 
             Entity entity = entityType.spawn(serverWorld, pos, SpawnReason.MOB_SUMMONED);
 
-            entity.setAttached(ModDataAttachments.getRitualPolePosPersistent(), new BlockPos(getPos().getX(), getPos().getY(), getPos().getZ()));
+//            entity.setAttached(ModDataAttachments.getRitualPolePosPersistent(), new BlockPos(getPos().getX(), getPos().getY(), getPos().getZ()));
+            ModComponents.RITUAL_POLE_POS_COMPONENT.get(entity).set(getPos());
 
 //            ((MobEntityMixinAccess) entity).rituals$addRitualModifiers();
 //            ((MobEntityMixinAccess) entity).rituals$preventDespawning();
@@ -197,7 +198,8 @@ public class RitualPoleBlockEntity extends BlockEntity {
     }
 
     private void stopRitual() {
-        getWorld().getPlayerByUuid(playerUuid).removeAttached(ModDataAttachments.getRitualPolePosPersistent());
+//        getWorld().getPlayerByUuid(playerUuid).removeAttached(ModDataAttachments.getRitualPolePosPersistent());
+        ModComponents.RITUAL_POLE_POS_COMPONENT.get(getWorld().getPlayerByUuid(playerUuid)).remove();
         playerUuid = new UUID(0L, 0L);
 
         timerStarted = false;

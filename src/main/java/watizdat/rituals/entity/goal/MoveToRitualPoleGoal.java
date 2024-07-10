@@ -4,7 +4,7 @@ import net.minecraft.entity.ai.goal.MoveToTargetPosGoal;
 import net.minecraft.entity.mob.PathAwareEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.WorldView;
-import watizdat.rituals.state.ModDataAttachments;
+import watizdat.rituals.state.ModComponents;
 
 import java.util.EnumSet;
 
@@ -16,7 +16,8 @@ public class MoveToRitualPoleGoal extends MoveToTargetPosGoal {
 
     @Override
     protected boolean isTargetPos(WorldView world, BlockPos pos) {
-        boolean isTarget = mob.getAttached(ModDataAttachments.getRitualPolePosPersistent()).equals(pos);
+//        boolean isTarget = mob.getAttached(ModDataAttachments.getRitualPolePosPersistent()).equals(pos);
+        boolean isTarget = ModComponents.RITUAL_POLE_POS_COMPONENT.get(mob).getValue().equals(pos);
 
         if (isTarget) {
             System.out.println(pos.toShortString());

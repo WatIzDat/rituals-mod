@@ -4,13 +4,12 @@ import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.entity.EntityType;
 import net.minecraft.network.PacketByteBuf;
-import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.math.BlockPos;
 import watizdat.rituals.block.entity.RitualPoleBlockEntity;
 import watizdat.rituals.enums.RitualState;
 import watizdat.rituals.network.ModNetworkConstants;
-import watizdat.rituals.state.ModPersistentState;
-import watizdat.rituals.state.ModPlayerData;
+import watizdat.rituals.state.ModComponents;
+import watizdat.rituals.state.component.EntityTypesKilledComponent;
 
 public class ModServerReceivers {
     public static void init() {
@@ -29,10 +28,10 @@ public class ModServerReceivers {
                 RitualPoleBlockEntity be = (RitualPoleBlockEntity) player.getWorld().getBlockEntity(pos);
                 be.resetRitualState();
 
-                ModPlayerData playerState = ModPersistentState.getPlayerState(player);
+                EntityTypesKilledComponent entityTypesKilled = ModComponents.ENTITY_TYPES_KILLED_COMPONENT.get(player);
 
                 PacketByteBuf openGuiBuf = PacketByteBufs.create();
-                openGuiBuf.writeCollection(playerState.entityTypesKilled.stream().map(EntityType::getId).toList(), PacketByteBuf::writeIdentifier);
+                openGuiBuf.writeCollection(entityTypesKilled.getValue().stream().map(EntityType::getId).toList(), PacketByteBuf::writeIdentifier);
                 openGuiBuf.writeBlockPos(pos);
 
                 RitualState ritualState = be.getRitualState();

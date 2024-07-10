@@ -137,16 +137,18 @@ public class RitualPoleBlockEntity extends BlockEntity {
 //            ((MobEntityMixinAccess) entity).rituals$addRitualModifiers();
 //            ((MobEntityMixinAccess) entity).rituals$preventDespawning();
 
-            if (entity instanceof BatEntity) {
-                ((BatEntityMixinAccess) entity).rituals$setAsAggressive();
-            }
+//            if (entity instanceof BatEntity) {
+//                ((BatEntityMixinAccess) entity).rituals$setAsAggressive();
+//            }
+//
+//            ((MobEntityMixinAccess) entity).rituals$addRitualModifiers();
+//            ((MobEntityMixinAccess) entity).rituals$preventDespawning();
 
-            ((MobEntityMixinAccess) entity).rituals$addRitualModifiers();
-            ((MobEntityMixinAccess) entity).rituals$preventDespawning();
+//            ((MobEntityMixinAccess) entity).rituals$setAsRitualMob();
 
-            if (entity instanceof PathAwareEntity) {
-                ((PathAwareEntityMixinAccess) entity).rituals$addPathAwareGoals(world);
-            }
+//            if (entity instanceof PathAwareEntity) {
+//                ((PathAwareEntityMixinAccess) entity).rituals$addPathAwareGoals(world);
+//            }
 
             if (entity instanceof SlimeEntity) {
                 ((SlimeEntityMixinAccess) entity).rituals$setAsAggressive();

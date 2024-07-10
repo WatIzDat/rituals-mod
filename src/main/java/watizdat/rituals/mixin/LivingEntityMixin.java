@@ -5,6 +5,10 @@ import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.attribute.EntityAttribute;
+import net.minecraft.entity.attribute.EntityAttributes;
+import net.minecraft.entity.mob.MobEntity;
+import net.minecraft.entity.passive.BatEntity;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -15,6 +19,8 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
+import watizdat.rituals.access.MobEntityMixinAccess;
 import watizdat.rituals.network.ModNetworkConstants;
 import watizdat.rituals.state.ModComponents;
 import watizdat.rituals.state.component.EntityTypesKilledComponent;
@@ -22,6 +28,8 @@ import watizdat.rituals.state.component.EntityTypesKilledComponent;
 @Mixin(LivingEntity.class)
 public abstract class LivingEntityMixin extends Entity {
 	@Shadow @Nullable public abstract LivingEntity getAttacker();
+
+	@Shadow public abstract float getMaxHealth();
 
 	public LivingEntityMixin(EntityType<?> type, World world) {
 		super(type, world);
@@ -31,15 +39,9 @@ public abstract class LivingEntityMixin extends Entity {
 	private void rituals$onDeath(CallbackInfo info) {
 		if (!getWorld().isClient) {
 			if (ModComponents.RITUAL_POLE_POS_COMPONENT.get(this).isPresent()) {
-//				BlockPos ritualPolePos = getAttached(ModDataAttachments.getRitualPolePosPersistent());
-
-//				((RitualPoleBlockEntity) getWorld().getBlockEntity(ritualPolePos)).removeEntityUuid(getUuid());
-				ModComponents.RITUAL_POLE_POS_COMPONENT.get(this).getBlockEntity(getWorld()).removeEntityUuid(getUuid());
+                ModComponents.RITUAL_POLE_POS_COMPONENT.get(this).getBlockEntity(getWorld()).removeEntityUuid(getUuid());
 			} else if (getAttacker() != null && getAttacker().isPlayer()) {
-//				ModPlayerData playerState = ModPersistentState.getPlayerState(getAttacker());
-//				playerState.entityTypesKilled.add(getType());
-
-				EntityTypesKilledComponent entityTypesKilled = ModComponents.ENTITY_TYPES_KILLED_COMPONENT.get(getAttacker());
+                EntityTypesKilledComponent entityTypesKilled = ModComponents.ENTITY_TYPES_KILLED_COMPONENT.get(getAttacker());
 
 				entityTypesKilled.add(getType());
 
@@ -51,6 +53,27 @@ public abstract class LivingEntityMixin extends Entity {
 				server.execute(() -> {
 					ServerPlayNetworking.send(playerEntity, ModNetworkConstants.KILLED_ENTITY_PACKET_ID, buf);
 				});
+			}
+		}
+	}
+
+	@Inject(at = @At("HEAD"), method = "getAttributeValue(Lnet/minecraft/entity/attribute/EntityAttribute;)D", cancellable = true)
+	private void rituals$returnRitualAttributesForRitualMobs(EntityAttribute attribute, CallbackInfoReturnable<Double> info) {
+		if (((LivingEntity) (Object) this) instanceof MobEntity
+				&& ((MobEntityMixinAccess) this).rituals$isRitualMob()) {
+
+			if (attribute == EntityAttributes.GENERIC_ATTACK_DAMAGE) {
+				info.setReturnValue(getMaxHealth() / 2d);
+			}
+
+			if (((LivingEntity) (Object) this) instanceof BatEntity) {
+				if (attribute == EntityAttributes.GENERIC_FLYING_SPEED) {
+					info.setReturnValue(0.6d);
+				}
+
+				if (attribute == EntityAttributes.GENERIC_MOVEMENT_SPEED) {
+					info.setReturnValue(0.3d);
+				}
 			}
 		}
 	}

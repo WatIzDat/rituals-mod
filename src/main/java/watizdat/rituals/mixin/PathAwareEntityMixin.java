@@ -21,25 +21,25 @@ public abstract class PathAwareEntityMixin extends MobEntity implements PathAwar
         super(entityType, world);
     }
 
-    @Override
-    public void rituals$addPathAwareGoals(World world) {
-        getAttributeInstance(EntityAttributes.GENERIC_ATTACK_DAMAGE).addPersistentModifier(new EntityAttributeModifier(
-                "Entity attack damage",
-                getMaxHealth() / 2,
-                EntityAttributeModifier.Operation.ADDITION
-        ));
-
-        if (world != null && !world.isClient) {
-            getBrain().clear();
-
-            goalSelector.clear(goal -> true);
-            targetSelector.clear(goal -> true);
-
-            goalSelector.add(3, new MoveToRitualPoleGoal((PathAwareEntity) (Object) this, 1.1, 50));
-            goalSelector.add(2, new LookAtEntityGoal(this, PlayerEntity.class, 8f));
-            goalSelector.add(2, new LookAroundGoal(this));
-            goalSelector.add(1, new MeleeAttackGoal((PathAwareEntity) (Object) this, 1d, false));
-            targetSelector.add(1, new ActiveTargetGoal<>(this, PlayerEntity.class, false));
-        }
-    }
+//    @Override
+//    public void rituals$addPathAwareGoals(World world) {
+////        getAttributeInstance(EntityAttributes.GENERIC_ATTACK_DAMAGE).addPersistentModifier(new EntityAttributeModifier(
+////                "Entity attack damage",
+////                getMaxHealth() / 2,
+////                EntityAttributeModifier.Operation.ADDITION
+////        ));
+//
+//        if (world != null && !world.isClient) {
+//            getBrain().clear();
+//
+//            goalSelector.clear(goal -> true);
+//            targetSelector.clear(goal -> true);
+//
+//            goalSelector.add(3, new MoveToRitualPoleGoal((PathAwareEntity) (Object) this, 1.1, 50));
+//            goalSelector.add(2, new LookAtEntityGoal(this, PlayerEntity.class, 8f));
+//            goalSelector.add(2, new LookAroundGoal(this));
+//            goalSelector.add(1, new MeleeAttackGoal((PathAwareEntity) (Object) this, 1d, false));
+//            targetSelector.add(1, new ActiveTargetGoal<>(this, PlayerEntity.class, false));
+//        }
+//    }
 }

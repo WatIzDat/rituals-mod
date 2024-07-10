@@ -45,17 +45,17 @@ public abstract class BatEntityMixin extends AmbientEntity implements BatEntityM
     public void rituals$setAsAggressive() {
         isAggressive = true;
 
-        getAttributeInstance(EntityAttributes.GENERIC_FLYING_SPEED).addPersistentModifier(new EntityAttributeModifier(
-                "Bat flying speed",
-                0.6,
-                EntityAttributeModifier.Operation.ADDITION
-        ));
-
-        getAttributeInstance(EntityAttributes.GENERIC_MOVEMENT_SPEED).addPersistentModifier(new EntityAttributeModifier(
-                "Bat movement speed",
-                0.3,
-                EntityAttributeModifier.Operation.ADDITION
-        ));
+//        getAttributeInstance(EntityAttributes.GENERIC_FLYING_SPEED).addPersistentModifier(new EntityAttributeModifier(
+//                "Bat flying speed",
+//                0.6,
+//                EntityAttributeModifier.Operation.ADDITION
+//        ));
+//
+//        getAttributeInstance(EntityAttributes.GENERIC_MOVEMENT_SPEED).addPersistentModifier(new EntityAttributeModifier(
+//                "Bat movement speed",
+//                0.3,
+//                EntityAttributeModifier.Operation.ADDITION
+//        ));
     }
 
     @Inject(at = @At("TAIL"), method = "<init>")

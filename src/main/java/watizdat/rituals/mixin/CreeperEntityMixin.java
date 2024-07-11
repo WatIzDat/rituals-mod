@@ -7,6 +7,7 @@ import net.minecraft.world.World;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.ModifyVariable;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import watizdat.rituals.state.ModComponents;
 
@@ -14,6 +15,15 @@ import watizdat.rituals.state.ModComponents;
 public abstract class CreeperEntityMixin extends MobEntityMixin {
     protected CreeperEntityMixin(EntityType<? extends LivingEntity> entityType, World world) {
         super(entityType, world);
+    }
+
+    @ModifyVariable(method = "explode", at = @At(value = "STORE"))
+    private float rituals$modifyExplosionPowerMultiplier(float f) {
+        if (rituals$isRitualMob()) {
+            return 1.5f;
+        }
+
+        return f;
     }
 
     @Inject(method = "explode", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/mob/CreeperEntity;discard()V"))

@@ -22,6 +22,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import watizdat.rituals.access.MobEntityMixinAccess;
 import watizdat.rituals.entity.goal.*;
 import watizdat.rituals.event.ComponentEvents;
+import watizdat.rituals.init.ModStatusEffects;
 
 @Mixin(MobEntity.class)
 public abstract class MobEntityMixin extends LivingEntity implements MobEntityMixinAccess {
@@ -71,13 +72,9 @@ public abstract class MobEntityMixin extends LivingEntity implements MobEntityMi
 
         addRitualGoals();
 
-        StatusEffectInstance speedEffectInstance = new StatusEffectInstance(
-                StatusEffects.SPEED, StatusEffectInstance.INFINITE, 4, false, false);
-        addStatusEffect(speedEffectInstance);
-
-        StatusEffectInstance strengthEffectInstance = new StatusEffectInstance(
-                StatusEffects.STRENGTH, StatusEffectInstance.INFINITE, 2, false, false);
-        addStatusEffect(strengthEffectInstance);
+        StatusEffectInstance statusEffectInstance = new StatusEffectInstance(
+                ModStatusEffects.RITUAL_STATUS_EFFECT, StatusEffectInstance.INFINITE, 0, false, true);
+        addStatusEffect(statusEffectInstance);
 
         return ActionResult.PASS;
     }

@@ -132,37 +132,7 @@ public class RitualPoleBlockEntity extends BlockEntity {
 
             Entity entity = entityType.spawn(serverWorld, pos, SpawnReason.MOB_SUMMONED);
 
-//            entity.setAttached(ModDataAttachments.getRitualPolePosPersistent(), new BlockPos(getPos().getX(), getPos().getY(), getPos().getZ()));
             ModComponents.RITUAL_POLE_POS_COMPONENT.get(entity).set(getPos());
-
-//            ComponentEvents.RITUAL_POLE_POS_SET.invoker().onSet();
-
-//            ((MobEntityMixinAccess) entity).rituals$addRitualModifiers();
-//            ((MobEntityMixinAccess) entity).rituals$preventDespawning();
-
-//            if (entity instanceof BatEntity) {
-//                ((BatEntityMixinAccess) entity).rituals$setAsAggressive();
-//            }
-//
-//            ((MobEntityMixinAccess) entity).rituals$addRitualModifiers();
-//            ((MobEntityMixinAccess) entity).rituals$preventDespawning();
-
-//            ((MobEntityMixinAccess) entity).rituals$setAsRitualMob();
-
-//            if (entity instanceof PathAwareEntity) {
-//                ((PathAwareEntityMixinAccess) entity).rituals$addPathAwareGoals(world);
-//            }
-
-//            if (entity instanceof SlimeEntity) {
-//                ((SlimeEntityMixinAccess) entity).rituals$setAsAggressive();
-//            }
-
-//            if (entity instanceof BatEntity) {
-//                ((BatEntityMixinAccess) entity).rituals$setAsAggressive();
-//            }
-
-//            ((MobEntityMixinAccess) entity).rituals$addRitualModifiers();
-//            ((MobEntityMixinAccess) entity).rituals$preventDespawning();
 
             StatusEffectInstance statusEffectInstance = new StatusEffectInstance(
                     StatusEffects.GLOWING, StatusEffectInstance.INFINITE, 0, false, false);

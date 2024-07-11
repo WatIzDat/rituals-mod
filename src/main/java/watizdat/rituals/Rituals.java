@@ -24,5 +24,6 @@ public class Rituals implements ModInitializer {
         ModFeatures.init();
         ModEvents.init();
         ModServerReceivers.init();
+        ModStatusEffects.init();
     }
 }

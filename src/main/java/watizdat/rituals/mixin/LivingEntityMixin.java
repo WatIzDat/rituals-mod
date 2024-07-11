@@ -77,9 +77,9 @@ public abstract class LivingEntityMixin extends Entity {
 
 			if (((LivingEntity) (Object) this) instanceof BatEntity) {
 				if (attribute == EntityAttributes.GENERIC_FLYING_SPEED) {
-					info.setReturnValue(0.6d);
+					info.setReturnValue(0.96d);
 				} else if (attribute == EntityAttributes.GENERIC_MOVEMENT_SPEED) {
-					info.setReturnValue(0.3d);
+					info.setReturnValue(0.48d);
 				}
 			}
 		}

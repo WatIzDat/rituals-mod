@@ -20,6 +20,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import watizdat.rituals.access.BatEntityMixinAccess;
+import watizdat.rituals.access.MobEntityMixinAccess;
 
 @Mixin(BatEntity.class)
 public abstract class BatEntityMixin extends AmbientEntity implements BatEntityMixinAccess {
@@ -41,35 +42,41 @@ public abstract class BatEntityMixin extends AmbientEntity implements BatEntityM
         return birdNavigation;
     }
 
-    @Override
-    public void rituals$setAsAggressive() {
-        isAggressive = true;
-
-//        getAttributeInstance(EntityAttributes.GENERIC_FLYING_SPEED).addPersistentModifier(new EntityAttributeModifier(
-//                "Bat flying speed",
-//                0.6,
-//                EntityAttributeModifier.Operation.ADDITION
-//        ));
+//    @Override
+//    public void rituals$setAsAggressive() {
+//        isAggressive = true;
 //
-//        getAttributeInstance(EntityAttributes.GENERIC_MOVEMENT_SPEED).addPersistentModifier(new EntityAttributeModifier(
-//                "Bat movement speed",
-//                0.3,
-//                EntityAttributeModifier.Operation.ADDITION
-//        ));
-    }
+////        getAttributeInstance(EntityAttributes.GENERIC_FLYING_SPEED).addPersistentModifier(new EntityAttributeModifier(
+////                "Bat flying speed",
+////                0.6,
+////                EntityAttributeModifier.Operation.ADDITION
+////        ));
+////
+////        getAttributeInstance(EntityAttributes.GENERIC_MOVEMENT_SPEED).addPersistentModifier(new EntityAttributeModifier(
+////                "Bat movement speed",
+////                0.3,
+////                EntityAttributeModifier.Operation.ADDITION
+////        ));
+//    }
 
     @Inject(at = @At("TAIL"), method = "<init>")
     private void rituals$init(CallbackInfo info, @Local(argsOnly = true) World world) {
-        if (!world.isClient) {
-            setRoosting(false);
-        }
+//        if (!world.isClient) {
+//            setRoosting(false);
+//        }
 
         moveControl = new FlightMoveControl((PathAwareEntity) (Object) this, 20, true);
     }
 
     @Inject(at = @At("HEAD"), method = "mobTick", cancellable = true)
     private void rituals$mobTick(CallbackInfo info) {
-        if (isAggressive) {
+//        if (isAggressive) {
+//            info.cancel();
+//        }
+
+        if (((MobEntityMixinAccess) this).rituals$isRitualMob()) {
+            setRoosting(false);
+
             info.cancel();
         }
     }

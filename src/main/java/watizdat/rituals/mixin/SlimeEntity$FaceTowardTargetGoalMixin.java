@@ -8,6 +8,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Constant;
 import org.spongepowered.asm.mixin.injection.ModifyArg;
 import org.spongepowered.asm.mixin.injection.ModifyConstant;
+import watizdat.rituals.access.MobEntityMixinAccess;
 import watizdat.rituals.access.SlimeEntityMixinAccess;
 
 @Mixin(targets = "net.minecraft.entity.mob.SlimeEntity$FaceTowardTargetGoal")
@@ -16,7 +17,7 @@ public abstract class SlimeEntity$FaceTowardTargetGoalMixin {
 
     @ModifyConstant(method = "start", constant = @Constant(intValue = 300))
     private int rituals$startTicks(int constant) {
-        if (((SlimeEntityMixinAccess) slime).rituals$isAggressive()) {
+        if (((MobEntityMixinAccess) slime).rituals$isRitualMob()) {
             return Integer.MAX_VALUE;
         }
 
@@ -25,7 +26,7 @@ public abstract class SlimeEntity$FaceTowardTargetGoalMixin {
 
     @ModifyConstant(method = "tick", constant = @Constant(floatValue = 10f))
     private float rituals$tickPitchChange(float constant) {
-        if (((SlimeEntityMixinAccess) slime).rituals$isAggressive()) {
+        if (((MobEntityMixinAccess) slime).rituals$isRitualMob()) {
             return Float.MAX_VALUE;
         }
 
@@ -34,7 +35,7 @@ public abstract class SlimeEntity$FaceTowardTargetGoalMixin {
 
     @ModifyArg(method = "tick", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/mob/SlimeEntity$SlimeMoveControl;look(FZ)V"), index = 1)
     private boolean rituals$tickCanAttack(boolean canAttack) {
-        if (((SlimeEntityMixinAccess) slime).rituals$isAggressive()) {
+        if (((MobEntityMixinAccess) slime).rituals$isRitualMob()) {
             return true;
         }
 

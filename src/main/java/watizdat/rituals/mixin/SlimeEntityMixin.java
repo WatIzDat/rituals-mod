@@ -13,6 +13,7 @@ import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Redirect;
 import watizdat.rituals.access.SlimeEntityMixinAccess;
+import watizdat.rituals.entity.goal.RitualSlimeActiveTargetGoal;
 
 @Mixin(SlimeEntity.class)
 public abstract class SlimeEntityMixin extends MobEntity implements SlimeEntityMixinAccess {
@@ -26,22 +27,22 @@ public abstract class SlimeEntityMixin extends MobEntity implements SlimeEntityM
         super(entityType, world);
     }
 
-    @Override
-    public boolean rituals$isAggressive() {
-        return isAggressive;
-    }
-
-    @Override
-    public void rituals$setAsAggressive() {
-        isAggressive = true;
-
-        targetSelector.remove(playerTargetGoal);
-        targetSelector.add(1, new ActiveTargetGoal<>(this, PlayerEntity.class, false));
-    }
+//    @Override
+//    public boolean rituals$isAggressive() {
+//        return isAggressive;
+//    }
+//
+//    @Override
+//    public void rituals$setAsAggressive() {
+//        isAggressive = true;
+//
+//        targetSelector.remove(playerTargetGoal);
+//        targetSelector.add(1, new ActiveTargetGoal<>(this, PlayerEntity.class, false));
+//    }
 
     @Redirect(method = "initGoals", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/ai/goal/GoalSelector;add(ILnet/minecraft/entity/ai/goal/Goal;)V", ordinal = 4))
-    private void rituals$addPlayerActiveTargetRedirect(GoalSelector instance, int priority, Goal goal) {
-        playerTargetGoal = new ActiveTargetGoal<>(this, PlayerEntity.class, 10, true, false, (livingEntity) -> {
+    private void rituals$storePlayerActiveTargetGoal(GoalSelector instance, int priority, Goal goal) {
+        playerTargetGoal = new RitualSlimeActiveTargetGoal<>(this, PlayerEntity.class, 10, true, false, (livingEntity) -> {
             return Math.abs(livingEntity.getY() - this.getY()) <= 4.0;
         });
 

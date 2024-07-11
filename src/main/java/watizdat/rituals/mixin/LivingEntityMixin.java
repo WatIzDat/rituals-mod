@@ -64,14 +64,14 @@ public abstract class LivingEntityMixin extends Entity {
 
 			if (attribute == EntityAttributes.GENERIC_ATTACK_DAMAGE) {
 				info.setReturnValue(getMaxHealth() / 2d);
+			} else if (attribute == EntityAttributes.GENERIC_FOLLOW_RANGE) {
+				info.setReturnValue(2048d);
 			}
 
 			if (((LivingEntity) (Object) this) instanceof BatEntity) {
 				if (attribute == EntityAttributes.GENERIC_FLYING_SPEED) {
 					info.setReturnValue(0.6d);
-				}
-
-				if (attribute == EntityAttributes.GENERIC_MOVEMENT_SPEED) {
+				} else if (attribute == EntityAttributes.GENERIC_MOVEMENT_SPEED) {
 					info.setReturnValue(0.3d);
 				}
 			}

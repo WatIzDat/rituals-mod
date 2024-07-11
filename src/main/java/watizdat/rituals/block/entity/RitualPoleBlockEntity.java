@@ -26,6 +26,7 @@ import org.joml.Vector3d;
 import watizdat.rituals.Rituals;
 import watizdat.rituals.access.*;
 import watizdat.rituals.enums.RitualState;
+import watizdat.rituals.event.ComponentEvents;
 import watizdat.rituals.init.ModBlockEntityTypes;
 import watizdat.rituals.state.ModComponents;
 import watizdat.rituals.state.component.EntityTypesKilledComponent;
@@ -134,6 +135,8 @@ public class RitualPoleBlockEntity extends BlockEntity {
 //            entity.setAttached(ModDataAttachments.getRitualPolePosPersistent(), new BlockPos(getPos().getX(), getPos().getY(), getPos().getZ()));
             ModComponents.RITUAL_POLE_POS_COMPONENT.get(entity).set(getPos());
 
+//            ComponentEvents.RITUAL_POLE_POS_SET.invoker().onSet();
+
 //            ((MobEntityMixinAccess) entity).rituals$addRitualModifiers();
 //            ((MobEntityMixinAccess) entity).rituals$preventDespawning();
 
@@ -150,9 +153,9 @@ public class RitualPoleBlockEntity extends BlockEntity {
 //                ((PathAwareEntityMixinAccess) entity).rituals$addPathAwareGoals(world);
 //            }
 
-            if (entity instanceof SlimeEntity) {
-                ((SlimeEntityMixinAccess) entity).rituals$setAsAggressive();
-            }
+//            if (entity instanceof SlimeEntity) {
+//                ((SlimeEntityMixinAccess) entity).rituals$setAsAggressive();
+//            }
 
 //            if (entity instanceof BatEntity) {
 //                ((BatEntityMixinAccess) entity).rituals$setAsAggressive();

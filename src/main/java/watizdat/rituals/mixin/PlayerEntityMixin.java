@@ -22,10 +22,8 @@ public abstract class PlayerEntityMixin extends LivingEntity {
     }
 
     @Inject(at = @At("TAIL"), method = "tickMovement")
-    private void rituals$tickMovement(CallbackInfo info) {
+    private void rituals$dealDamageIfOutsideRitualCircle(CallbackInfo info) {
         if (ModComponents.RITUAL_POLE_POS_COMPONENT.get(this).isPresent()) {
-//            BlockPos ritualPolePos = getAttached(ModDataAttachments.getRitualPolePosPersistent());
-
             if (ModComponents.RITUAL_POLE_POS_COMPONENT.get(this).getBlockEntity(getWorld()).isOutsideCircle(getPos().getX(), getPos().getZ())) {
                 damage(ModDamageTypes.of(getWorld(), ModDamageTypes.OUTSIDE_RITUAL_CIRCLE), 10f);
             }

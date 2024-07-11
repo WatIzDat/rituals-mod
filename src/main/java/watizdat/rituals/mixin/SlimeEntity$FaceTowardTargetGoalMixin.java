@@ -9,7 +9,6 @@ import org.spongepowered.asm.mixin.injection.Constant;
 import org.spongepowered.asm.mixin.injection.ModifyArg;
 import org.spongepowered.asm.mixin.injection.ModifyConstant;
 import watizdat.rituals.access.MobEntityMixinAccess;
-import watizdat.rituals.access.SlimeEntityMixinAccess;
 
 @Mixin(targets = "net.minecraft.entity.mob.SlimeEntity$FaceTowardTargetGoal")
 public abstract class SlimeEntity$FaceTowardTargetGoalMixin {

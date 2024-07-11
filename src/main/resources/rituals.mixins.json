@@ -7,7 +7,6 @@
 		"BatEntityMixin",
 		"LivingEntityMixin",
 		"MobEntityMixin",
-		"PathAwareEntityMixin",
 		"PlayerEntityMixin",
 		"ServerPlayerEntityMixin",
 		"SlimeEntity$FaceTowardTargetGoalMixin",

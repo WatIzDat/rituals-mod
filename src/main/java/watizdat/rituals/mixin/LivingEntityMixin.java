@@ -5,6 +5,7 @@ import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.attribute.AttributeContainer;
 import net.minecraft.entity.attribute.EntityAttribute;
 import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.entity.mob.MobEntity;
@@ -30,6 +31,8 @@ public abstract class LivingEntityMixin extends Entity {
 	@Shadow @Nullable public abstract LivingEntity getAttacker();
 
 	@Shadow public abstract float getMaxHealth();
+
+	@Shadow public abstract AttributeContainer getAttributes();
 
 	public LivingEntityMixin(EntityType<?> type, World world) {
 		super(type, world);
@@ -62,9 +65,13 @@ public abstract class LivingEntityMixin extends Entity {
 		if (((LivingEntity) (Object) this) instanceof MobEntity
 				&& ((MobEntityMixinAccess) this).rituals$isRitualMob()) {
 
-			if (attribute == EntityAttributes.GENERIC_ATTACK_DAMAGE) {
-				info.setReturnValue(getMaxHealth() / 2d);
-			} else if (attribute == EntityAttributes.GENERIC_FOLLOW_RANGE) {
+			if (attribute == EntityAttributes.GENERIC_ATTACK_DAMAGE &&
+					!getAttributes().hasAttribute(EntityAttributes.GENERIC_ATTACK_DAMAGE)) {
+
+				info.setReturnValue((double) getMaxHealth());
+			}
+
+			if (attribute == EntityAttributes.GENERIC_FOLLOW_RANGE) {
 				info.setReturnValue(2048d);
 			}
 

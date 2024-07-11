@@ -18,7 +18,7 @@ public abstract class ServerPlayerEntityMixin extends PlayerEntity {
     }
 
     @Inject(at = @At("TAIL"), method = "onDeath")
-    private void rituals$onDeath(CallbackInfo info) {
+    private void rituals$failRitualOnDeath(CallbackInfo info) {
         if (ModComponents.RITUAL_POLE_POS_COMPONENT.get(this).isPresent()) {
             ModComponents.RITUAL_POLE_POS_COMPONENT.get(this).getBlockEntity(getWorld()).failRitual();
         }

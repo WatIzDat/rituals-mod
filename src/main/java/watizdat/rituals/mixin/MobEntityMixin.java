@@ -7,12 +7,10 @@ import net.minecraft.entity.ai.control.MoveControl;
 import net.minecraft.entity.ai.goal.*;
 import net.minecraft.entity.ai.pathing.EntityNavigation;
 import net.minecraft.entity.effect.StatusEffectInstance;
-import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.entity.mob.PathAwareEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.NbtCompound;
-import net.minecraft.util.ActionResult;
 import net.minecraft.world.Difficulty;
 import net.minecraft.world.World;
 import org.spongepowered.asm.mixin.*;
@@ -21,7 +19,6 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import watizdat.rituals.access.MobEntityMixinAccess;
 import watizdat.rituals.entity.goal.*;
-import watizdat.rituals.event.ComponentEvents;
 import watizdat.rituals.init.ModStatusEffects;
 
 import java.util.ArrayList;
@@ -51,10 +48,10 @@ public abstract class MobEntityMixin extends LivingEntity implements MobEntityMi
         super(entityType, world);
     }
 
-    @Inject(at = @At("TAIL"), method = "<init>")
-    private void rituals$registerRitualPolePosSetEventCallback(CallbackInfo info) {
-        ComponentEvents.RITUAL_POLE_POS_SET.register(this::onRitualPolePosSet);
-    }
+//    @Inject(at = @At("TAIL"), method = "<init>")
+//    private void rituals$registerRitualPolePosSetEventCallback(CallbackInfo info) {
+//        ComponentEvents.RITUAL_POLE_POS_SET.register(this::onRitualPolePosSet);
+//    }
 
     @Inject(at = @At("HEAD"), method = "checkDespawn", cancellable = true)
     private void rituals$preventRitualMobDespawning(CallbackInfo info) {
@@ -69,8 +66,21 @@ public abstract class MobEntityMixin extends LivingEntity implements MobEntityMi
         }
     }
 
-    @Unique
-    protected ActionResult onRitualPolePosSet() {
+//    @Unique
+//    protected ActionResult onRitualPolePosSet() {
+//        isRitualMob = true;
+//
+//        addRitualGoals();
+//
+//        StatusEffectInstance statusEffectInstance = new StatusEffectInstance(
+//                ModStatusEffects.RITUAL_STATUS_EFFECT, StatusEffectInstance.INFINITE, 0, false, true);
+//        addStatusEffect(statusEffectInstance);
+//
+//        return ActionResult.PASS;
+//    }
+
+    @Override
+    public void rituals$setAsRitualMob() {
         isRitualMob = true;
 
         addRitualGoals();
@@ -78,8 +88,6 @@ public abstract class MobEntityMixin extends LivingEntity implements MobEntityMi
         StatusEffectInstance statusEffectInstance = new StatusEffectInstance(
                 ModStatusEffects.RITUAL_STATUS_EFFECT, StatusEffectInstance.INFINITE, 0, false, true);
         addStatusEffect(statusEffectInstance);
-
-        return ActionResult.PASS;
     }
 
     @Unique
@@ -119,7 +127,7 @@ public abstract class MobEntityMixin extends LivingEntity implements MobEntityMi
         isRitualMob = nbt.getBoolean("IsRitualMob");
 
         if (isRitualMob) {
-            onRitualPolePosSet();
+            rituals$setAsRitualMob();
         }
     }
 }

@@ -9,9 +9,6 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.SpawnReason;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.effect.StatusEffects;
-import net.minecraft.entity.mob.PathAwareEntity;
-import net.minecraft.entity.mob.SlimeEntity;
-import net.minecraft.entity.passive.BatEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.particle.DustParticleEffect;
@@ -26,7 +23,6 @@ import org.joml.Vector3d;
 import watizdat.rituals.Rituals;
 import watizdat.rituals.access.*;
 import watizdat.rituals.enums.RitualState;
-import watizdat.rituals.event.ComponentEvents;
 import watizdat.rituals.init.ModBlockEntityTypes;
 import watizdat.rituals.state.ModComponents;
 import watizdat.rituals.state.component.EntityTypesKilledComponent;
@@ -63,7 +59,6 @@ public class RitualPoleBlockEntity extends BlockEntity {
         Rituals.LOGGER.info("Ritual started");
 
         playerUuid = player.getUuid();
-//        player.setAttached(ModDataAttachments.getRitualPolePosPersistent(), getPos());
         ModComponents.RITUAL_POLE_POS_COMPONENT.get(player).set(getPos());
 
         ritualState = RitualState.IN_PROGRESS;
@@ -133,6 +128,8 @@ public class RitualPoleBlockEntity extends BlockEntity {
             Entity entity = entityType.spawn(serverWorld, pos, SpawnReason.MOB_SUMMONED);
 
             ModComponents.RITUAL_POLE_POS_COMPONENT.get(entity).set(getPos());
+
+            ((MobEntityMixinAccess) entity).rituals$setAsRitualMob();
 
             StatusEffectInstance statusEffectInstance = new StatusEffectInstance(
                     StatusEffects.GLOWING, StatusEffectInstance.INFINITE, 0, false, false);

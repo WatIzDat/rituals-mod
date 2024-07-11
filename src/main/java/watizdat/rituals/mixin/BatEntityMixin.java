@@ -7,7 +7,6 @@ import net.minecraft.entity.ai.pathing.BirdNavigation;
 import net.minecraft.entity.mob.AmbientEntity;
 import net.minecraft.entity.mob.PathAwareEntity;
 import net.minecraft.entity.passive.BatEntity;
-import net.minecraft.util.ActionResult;
 import net.minecraft.world.World;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -26,8 +25,8 @@ public abstract class BatEntityMixin extends MobEntityMixin implements BatEntity
     }
 
     @Override
-    protected ActionResult onRitualPolePosSet() {
-        ActionResult result = super.onRitualPolePosSet();
+    public void rituals$setAsRitualMob() {
+        super.rituals$setAsRitualMob();
 
         moveControl = new FlightMoveControl((PathAwareEntity) (Object) this, 20, true);
 
@@ -38,8 +37,6 @@ public abstract class BatEntityMixin extends MobEntityMixin implements BatEntity
         navigation = birdNavigation;
 
         setRoosting(false);
-
-        return result;
     }
 
     @Inject(at = @At("HEAD"), method = "mobTick", cancellable = true)

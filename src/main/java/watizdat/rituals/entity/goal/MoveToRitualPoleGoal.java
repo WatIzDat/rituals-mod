@@ -26,7 +26,6 @@ public class MoveToRitualPoleGoal extends MoveToTargetPosGoal {
 
     @Override
     protected boolean isTargetPos(WorldView world, BlockPos pos) {
-//        boolean isTarget = mob.getAttached(ModDataAttachments.getRitualPolePosPersistent()).equals(pos);
         boolean isTarget = ModComponents.RITUAL_POLE_POS_COMPONENT.get(mob).getValue().equals(pos);
 
         if (isTarget) {

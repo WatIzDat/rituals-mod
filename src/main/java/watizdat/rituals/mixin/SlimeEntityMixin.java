@@ -7,7 +7,6 @@ import net.minecraft.entity.ai.goal.GoalSelector;
 import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.entity.mob.SlimeEntity;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.util.ActionResult;
 import net.minecraft.world.World;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
@@ -24,15 +23,12 @@ public abstract class SlimeEntityMixin extends MobEntityMixin implements SlimeEn
         super(entityType, world);
     }
 
-    @Unique
     @Override
-    protected ActionResult onRitualPolePosSet() {
-        ActionResult result = super.onRitualPolePosSet();
+    public void rituals$setAsRitualMob() {
+        super.rituals$setAsRitualMob();
 
         targetSelector.remove(playerTargetGoal);
         targetSelector.add(1, new ActiveTargetGoal<>((MobEntity) (Object) this, PlayerEntity.class, false));
-
-        return result;
     }
 
     @Redirect(method = "initGoals", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/ai/goal/GoalSelector;add(ILnet/minecraft/entity/ai/goal/Goal;)V", ordinal = 4))

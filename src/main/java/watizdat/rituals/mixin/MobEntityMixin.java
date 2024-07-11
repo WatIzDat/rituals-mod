@@ -24,6 +24,9 @@ import watizdat.rituals.entity.goal.*;
 import watizdat.rituals.event.ComponentEvents;
 import watizdat.rituals.init.ModStatusEffects;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Mixin(MobEntity.class)
 public abstract class MobEntityMixin extends LivingEntity implements MobEntityMixinAccess {
     @Shadow protected abstract boolean isDisallowedInPeaceful();
@@ -84,6 +87,20 @@ public abstract class MobEntityMixin extends LivingEntity implements MobEntityMi
         System.out.println("adding goals");
 
         if (((MobEntity) (Object) this) instanceof PathAwareEntity) {
+            List<Goal> goalsToRemove = new ArrayList<>();
+
+            goalSelector.getGoals().forEach(goal -> {
+                if (goal.getGoal() instanceof FleeEntityGoal<?> ||
+                    goal.getGoal() instanceof EscapeDangerGoal) {
+
+                    goalsToRemove.add(goal.getGoal());
+                }
+            });
+
+            for (Goal goal : goalsToRemove) {
+                goalSelector.remove(goal);
+            }
+
             goalSelector.add(3, new MoveToRitualPoleGoal((PathAwareEntity) (Object) this, 1.1, 50));
             goalSelector.add(2, new LookAtEntityGoal((MobEntity) (Object) this, PlayerEntity.class, 8f));
             goalSelector.add(2, new LookAroundGoal((MobEntity) (Object) this));

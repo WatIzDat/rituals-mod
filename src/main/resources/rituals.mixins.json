@@ -5,6 +5,7 @@
 	"mixins": [
 		"AmbientEntityDummyMixin",
 		"BatEntityMixin",
+		"CreeperEntityMixin",
 		"LivingEntityMixin",
 		"MobEntityMixin",
 		"PlayerEntityMixin",

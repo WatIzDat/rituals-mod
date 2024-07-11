@@ -145,6 +145,12 @@ public class RitualPoleBlockEntity extends BlockEntity {
     }
 
     public void successRitual() {
+        if (getWorld().getPlayerByUuid(playerUuid) == null ||
+            getWorld().getPlayerByUuid(playerUuid).isDead()) {
+
+            return;
+        }
+
         ritualState = RitualState.SUCCESS;
 
         stopRitual();

@@ -1,12 +1,14 @@
 package watizdat.rituals.mixin;
 
 import com.llamalad7.mixinextras.sugar.Local;
+import net.minecraft.entity.CrossbowUser;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.control.MoveControl;
 import net.minecraft.entity.ai.goal.*;
 import net.minecraft.entity.ai.pathing.EntityNavigation;
 import net.minecraft.entity.effect.StatusEffectInstance;
+import net.minecraft.entity.mob.HostileEntity;
 import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.entity.mob.PathAwareEntity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -48,11 +50,6 @@ public abstract class MobEntityMixin extends LivingEntity implements MobEntityMi
         super(entityType, world);
     }
 
-//    @Inject(at = @At("TAIL"), method = "<init>")
-//    private void rituals$registerRitualPolePosSetEventCallback(CallbackInfo info) {
-//        ComponentEvents.RITUAL_POLE_POS_SET.register(this::onRitualPolePosSet);
-//    }
-
     @Inject(at = @At("HEAD"), method = "checkDespawn", cancellable = true)
     private void rituals$preventRitualMobDespawning(CallbackInfo info) {
         if (rituals$isRitualMob()) {
@@ -65,19 +62,6 @@ public abstract class MobEntityMixin extends LivingEntity implements MobEntityMi
             info.cancel();
         }
     }
-
-//    @Unique
-//    protected ActionResult onRitualPolePosSet() {
-//        isRitualMob = true;
-//
-//        addRitualGoals();
-//
-//        StatusEffectInstance statusEffectInstance = new StatusEffectInstance(
-//                ModStatusEffects.RITUAL_STATUS_EFFECT, StatusEffectInstance.INFINITE, 0, false, true);
-//        addStatusEffect(statusEffectInstance);
-//
-//        return ActionResult.PASS;
-//    }
 
     @Override
     public void rituals$setAsRitualMob() {
@@ -97,13 +81,31 @@ public abstract class MobEntityMixin extends LivingEntity implements MobEntityMi
         if (((MobEntity) (Object) this) instanceof PathAwareEntity) {
             List<Goal> goalsToRemove = new ArrayList<>();
 
-            goalSelector.getGoals().forEach(goal -> {
+            boolean hasCrossbowAttackGoal = false;
+
+            for (PrioritizedGoal goal : goalSelector.getGoals()) {
                 if (goal.getGoal() instanceof FleeEntityGoal<?> ||
-                    goal.getGoal() instanceof EscapeDangerGoal) {
+                        goal.getGoal() instanceof EscapeDangerGoal) {
 
                     goalsToRemove.add(goal.getGoal());
                 }
-            });
+
+                if (goal.getGoal() instanceof CrossbowAttackGoal<?>) {
+                    hasCrossbowAttackGoal = true;
+                }
+            }
+
+//            goalSelector.getGoals().forEach(goal -> {
+//                if (goal.getGoal() instanceof FleeEntityGoal<?> ||
+//                    goal.getGoal() instanceof EscapeDangerGoal) {
+//
+//                    goalsToRemove.add(goal.getGoal());
+//                }
+//
+//                if (goal.getGoal() instanceof CrossbowAttackGoal<?>) {
+//                    hasCrossbowAttackGoal = true;
+//                }
+//            });
 
             for (Goal goal : goalsToRemove) {
                 goalSelector.remove(goal);
@@ -112,7 +114,11 @@ public abstract class MobEntityMixin extends LivingEntity implements MobEntityMi
             goalSelector.add(3, new MoveToRitualPoleGoal((PathAwareEntity) (Object) this, 1.1, 50));
             goalSelector.add(2, new LookAtEntityGoal((MobEntity) (Object) this, PlayerEntity.class, 8f));
             goalSelector.add(2, new LookAroundGoal((MobEntity) (Object) this));
-            goalSelector.add(1, new MeleeAttackGoal((PathAwareEntity) (Object) this, 1d, false));
+            if (!hasCrossbowAttackGoal) {
+                goalSelector.add(1, new MeleeAttackGoal((PathAwareEntity) (Object) this, 1d, false));
+            } else {
+                goalSelector.add(1, new CrossbowAttackGoal<>((HostileEntity & CrossbowUser) (Object) this, 1.0, 48.0F));
+            }
             targetSelector.add(1, new ActiveTargetGoal<>((MobEntity) (Object) this, PlayerEntity.class, false));
         }
     }

@@ -6,6 +6,8 @@
 		"AmbientEntityDummyMixin",
 		"BatEntityMixin",
 		"CreeperEntityMixin",
+		"CrossbowAttackGoalMixin",
+		"CrossbowItemMixin",
 		"LivingEntityMixin",
 		"MobEntityMixin",
 		"PlayerEntityMixin",

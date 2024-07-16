@@ -29,7 +29,7 @@ public abstract class CreeperEntityMixin extends MobEntityMixin {
     @Inject(method = "explode", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/mob/CreeperEntity;discard()V"))
     private void rituals$removeEntityUuidOnExplosion(CallbackInfo info) {
         if (rituals$isRitualMob()) {
-            ModComponents.RITUAL_POLE_POS_COMPONENT.get(this).getBlockEntity(getWorld()).removeEntityUuid(getUuid());
+            ModComponents.RITUAL_POLE_POS_COMPONENT.get(this).getBlockEntity(getWorld()).removeEntityUuid(getUuid(), false);
         }
     }
 

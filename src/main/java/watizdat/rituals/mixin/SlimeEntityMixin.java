@@ -1,5 +1,6 @@
 package watizdat.rituals.mixin;
 
+import com.llamalad7.mixinextras.sugar.Local;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.ai.goal.ActiveTargetGoal;
 import net.minecraft.entity.ai.goal.Goal;
@@ -11,8 +12,12 @@ import net.minecraft.world.World;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import watizdat.rituals.access.MobEntityMixinAccess;
 import watizdat.rituals.access.SlimeEntityMixinAccess;
+import watizdat.rituals.state.ModComponents;
 
 @Mixin(SlimeEntity.class)
 public abstract class SlimeEntityMixin extends MobEntityMixin implements SlimeEntityMixinAccess {
@@ -38,5 +43,16 @@ public abstract class SlimeEntityMixin extends MobEntityMixin implements SlimeEn
         });
 
         targetSelector.add(1, playerTargetGoal);
+    }
+
+    @Inject(method = "remove", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/World;spawnEntity(Lnet/minecraft/entity/Entity;)Z"))
+    private void rituals$setChildSlimesAsRitualMobs(CallbackInfo info, @Local SlimeEntity slimeEntity) {
+        if (rituals$isRitualMob()) {
+            ModComponents.RITUAL_POLE_POS_COMPONENT.get(slimeEntity).set(ModComponents.RITUAL_POLE_POS_COMPONENT.get(this).getValue());
+
+            ((MobEntityMixinAccess) slimeEntity).rituals$setAsRitualMob();
+
+            ModComponents.RITUAL_POLE_POS_COMPONENT.get(this).getBlockEntity(getWorld()).addEntityUuid(slimeEntity.getUuid());
+        }
     }
 }

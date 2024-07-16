@@ -9,6 +9,7 @@ import net.minecraft.entity.attribute.AttributeContainer;
 import net.minecraft.entity.attribute.EntityAttribute;
 import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.entity.mob.MobEntity;
+import net.minecraft.entity.mob.SlimeEntity;
 import net.minecraft.entity.passive.BatEntity;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.server.MinecraftServer;
@@ -42,7 +43,10 @@ public abstract class LivingEntityMixin extends Entity {
 	private void rituals$onDeath(CallbackInfo info) {
 		if (!getWorld().isClient) {
 			if (ModComponents.RITUAL_POLE_POS_COMPONENT.get(this).isPresent()) {
-                ModComponents.RITUAL_POLE_POS_COMPONENT.get(this).getBlockEntity(getWorld()).removeEntityUuid(getUuid());
+				boolean hasChildren = ((LivingEntity) (Object) this) instanceof SlimeEntity &&
+						((SlimeEntity) (Object) this).getSize() > 1;
+
+                ModComponents.RITUAL_POLE_POS_COMPONENT.get(this).getBlockEntity(getWorld()).removeEntityUuid(getUuid(), hasChildren);
 			} else if (getAttacker() != null && getAttacker().isPlayer()) {
                 EntityTypesKilledComponent entityTypesKilled = ModComponents.ENTITY_TYPES_KILLED_COMPONENT.get(getAttacker());
 

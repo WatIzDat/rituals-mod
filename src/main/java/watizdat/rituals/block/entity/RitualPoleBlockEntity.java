@@ -45,12 +45,18 @@ public class RitualPoleBlockEntity extends BlockEntity {
         super(ModBlockEntityTypes.RITUAL_POLE, pos, state);
     }
 
-    public void removeEntityUuid(UUID uuid) {
+    public void addEntityUuid(UUID uuid) {
+        entityUuids.add(uuid);
+
+        markDirty();
+    }
+
+    public void removeEntityUuid(UUID uuid, boolean hasChildren) {
         entityUuids.remove(uuid);
 
         markDirty();
 
-        if (entityUuids.isEmpty()) {
+        if (entityUuids.isEmpty() && !hasChildren) {
             successRitual();
         }
     }
@@ -135,9 +141,7 @@ public class RitualPoleBlockEntity extends BlockEntity {
                     StatusEffects.GLOWING, StatusEffectInstance.INFINITE, 0, false, false);
             ((LivingEntity) entity).addStatusEffect(statusEffectInstance);
 
-            entityUuids.add(entity.getUuid());
-
-            markDirty();
+            addEntityUuid(entity.getUuid());
         }
     }
 

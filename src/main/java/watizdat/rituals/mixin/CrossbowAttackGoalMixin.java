@@ -29,15 +29,4 @@ public abstract class CrossbowAttackGoalMixin<T extends HostileEntity & RangedAt
             chargedTicksLeft = 5;
         }
     }
-
-//    @WrapOperation(method = "tick", at = @At(value = "INVOKE", target = "Lnet/minecraft/util/math/random/Random;nextInt(I)I", shift = At.Shift.BEFORE))
-//    private void rituals$test(CrossbowAttackGoal<?> instance, int newValue, Operation<Void> original) {
-//        if (((MobEntityMixinAccess) actor).rituals$isRitualMob()) {
-//            chargedTicksLeft = 10;
-//
-//            return;
-//        }
-//
-//        original.call(instance, newValue);
-//    }
 }

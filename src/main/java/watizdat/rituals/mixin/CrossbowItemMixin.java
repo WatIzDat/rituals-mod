@@ -29,7 +29,9 @@ public class CrossbowItemMixin {
 
     @ModifyVariable(method = "shoot", at = @At(value = "STORE", ordinal = 1), ordinal = 0)
     private static ProjectileEntity rituals$increaseDamageOfProjectileForRitualMobs(ProjectileEntity original, @Local(argsOnly = true) LivingEntity shooter) {
-        if (((MobEntityMixinAccess) shooter).rituals$isRitualMob()) {
+        if (shooter instanceof MobEntity &&
+                ((MobEntityMixinAccess) shooter).rituals$isRitualMob()) {
+
             ((PersistentProjectileEntity) original).setDamage(((PersistentProjectileEntity) original).getDamage() + 10d);
         }
 

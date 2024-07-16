@@ -1,22 +1,23 @@
 {
-	"required": true,
-	"package": "watizdat.rituals.mixin",
-	"compatibilityLevel": "JAVA_17",
-	"mixins": [
-		"AmbientEntityDummyMixin",
-		"BatEntityMixin",
-		"CreeperEntityMixin",
-		"CrossbowAttackGoalMixin",
-		"CrossbowItemMixin",
-		"LivingEntityMixin",
-		"MobEntityMixin",
-		"PlayerEntityMixin",
-		"ServerPlayerEntityMixin",
-		"SlimeEntity$FaceTowardTargetGoalMixin",
-		"SlimeEntityMixin"
-	],
-	"injectors": {
-		"defaultRequire": 1
-	},
-	"plugin": "watizdat.rituals.mixin.MixinConfigPlugin"
+  "required": true,
+  "package": "watizdat.rituals.mixin",
+  "compatibilityLevel": "JAVA_17",
+  "mixins": [
+    "AmbientEntityDummyMixin",
+    "BatEntityMixin",
+    "BlazeEntity$ShootFireballGoalMixin",
+    "CreeperEntityMixin",
+    "CrossbowAttackGoalMixin",
+    "CrossbowItemMixin",
+    "LivingEntityMixin",
+    "MobEntityMixin",
+    "PlayerEntityMixin",
+    "ServerPlayerEntityMixin",
+    "SlimeEntity$FaceTowardTargetGoalMixin",
+    "SlimeEntityMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  },
+  "plugin": "watizdat.rituals.mixin.MixinConfigPlugin"
 }

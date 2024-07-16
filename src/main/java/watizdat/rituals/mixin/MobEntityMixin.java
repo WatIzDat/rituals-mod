@@ -8,6 +8,7 @@ import net.minecraft.entity.ai.control.MoveControl;
 import net.minecraft.entity.ai.goal.*;
 import net.minecraft.entity.ai.pathing.EntityNavigation;
 import net.minecraft.entity.effect.StatusEffectInstance;
+import net.minecraft.entity.mob.BlazeEntity;
 import net.minecraft.entity.mob.HostileEntity;
 import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.entity.mob.PathAwareEntity;
@@ -82,6 +83,7 @@ public abstract class MobEntityMixin extends LivingEntity implements MobEntityMi
             List<Goal> goalsToRemove = new ArrayList<>();
 
             boolean hasCrossbowAttackGoal = false;
+            boolean hasBlazeEntityShootFireballGoal = false;
 
             for (PrioritizedGoal goal : goalSelector.getGoals()) {
                 if (goal.getGoal() instanceof FleeEntityGoal<?> ||
@@ -93,19 +95,11 @@ public abstract class MobEntityMixin extends LivingEntity implements MobEntityMi
                 if (goal.getGoal() instanceof CrossbowAttackGoal<?>) {
                     hasCrossbowAttackGoal = true;
                 }
-            }
 
-//            goalSelector.getGoals().forEach(goal -> {
-//                if (goal.getGoal() instanceof FleeEntityGoal<?> ||
-//                    goal.getGoal() instanceof EscapeDangerGoal) {
-//
-//                    goalsToRemove.add(goal.getGoal());
-//                }
-//
-//                if (goal.getGoal() instanceof CrossbowAttackGoal<?>) {
-//                    hasCrossbowAttackGoal = true;
-//                }
-//            });
+                if (goal.getGoal() instanceof BlazeEntity.ShootFireballGoal) {
+                    hasBlazeEntityShootFireballGoal = true;
+                }
+            }
 
             for (Goal goal : goalsToRemove) {
                 goalSelector.remove(goal);
@@ -114,10 +108,13 @@ public abstract class MobEntityMixin extends LivingEntity implements MobEntityMi
             goalSelector.add(3, new MoveToRitualPoleGoal((PathAwareEntity) (Object) this, 1.1, 50));
             goalSelector.add(2, new LookAtEntityGoal((MobEntity) (Object) this, PlayerEntity.class, 8f));
             goalSelector.add(2, new LookAroundGoal((MobEntity) (Object) this));
-            if (!hasCrossbowAttackGoal) {
+            if (!hasCrossbowAttackGoal && !hasBlazeEntityShootFireballGoal) {
                 goalSelector.add(1, new MeleeAttackGoal((PathAwareEntity) (Object) this, 1d, false));
-            } else {
-                goalSelector.add(1, new CrossbowAttackGoal<>((HostileEntity & CrossbowUser) (Object) this, 1.0, 48.0F));
+            } else if (hasCrossbowAttackGoal) {
+                goalSelector.add(2, new CrossbowAttackGoal<>((HostileEntity & CrossbowUser) (Object) this, 1.0, 48.0F));
+            } else if (hasBlazeEntityShootFireballGoal) {
+                goalSelector.add(1, new MeleeAttackGoal((PathAwareEntity) (Object) this, 1d, false));
+                goalSelector.add(2, new BlazeEntity.ShootFireballGoal((BlazeEntity) (Object) this));
             }
             targetSelector.add(1, new ActiveTargetGoal<>((MobEntity) (Object) this, PlayerEntity.class, false));
         }

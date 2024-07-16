@@ -9,6 +9,8 @@
     "CreeperEntityMixin",
     "CrossbowAttackGoalMixin",
     "CrossbowItemMixin",
+    "EndermanEntity$TeleportTowardsPlayerGoalMixin",
+    "EndermanEntityMixin",
     "LivingEntityMixin",
     "MobEntityMixin",
     "PlayerEntityMixin",

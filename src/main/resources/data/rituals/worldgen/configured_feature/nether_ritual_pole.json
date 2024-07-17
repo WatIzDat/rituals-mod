@@ -1,6 +1,6 @@
 {
   "type": "rituals:ritual_pole",
   "config": {
-    "is_nether_pole": false
+    "is_nether_pole": true
   }
 }

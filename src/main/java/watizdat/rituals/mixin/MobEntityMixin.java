@@ -69,10 +69,6 @@ public abstract class MobEntityMixin extends LivingEntity implements MobEntityMi
         isRitualMob = true;
 
         addRitualGoals();
-
-        StatusEffectInstance statusEffectInstance = new StatusEffectInstance(
-                ModStatusEffects.RITUAL_STATUS_EFFECT, StatusEffectInstance.INFINITE, 0, false, true);
-        addStatusEffect(statusEffectInstance);
     }
 
     @Unique

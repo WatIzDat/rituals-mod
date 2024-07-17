@@ -1,8 +1,8 @@
 package watizdat.rituals.access;
 
+import net.minecraft.util.math.BlockPos;
+
 public interface MobEntityMixinAccess {
-//    void rituals$addRitualModifiers();
-//    void rituals$preventDespawning();
     boolean rituals$isRitualMob();
     void rituals$setAsRitualMob();
 }

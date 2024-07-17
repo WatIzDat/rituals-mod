@@ -22,6 +22,7 @@ import net.minecraft.world.World;
 import org.joml.Vector3d;
 import watizdat.rituals.Rituals;
 import watizdat.rituals.access.*;
+import watizdat.rituals.entity.ModEntityHelper;
 import watizdat.rituals.enums.RitualState;
 import watizdat.rituals.init.ModBlockEntityTypes;
 import watizdat.rituals.state.ModComponents;
@@ -133,15 +134,7 @@ public class RitualPoleBlockEntity extends BlockEntity {
 
             Entity entity = entityType.spawn(serverWorld, pos, SpawnReason.MOB_SUMMONED);
 
-            ModComponents.RITUAL_POLE_POS_COMPONENT.get(entity).set(getPos());
-
-            ((MobEntityMixinAccess) entity).rituals$setAsRitualMob();
-
-            StatusEffectInstance statusEffectInstance = new StatusEffectInstance(
-                    StatusEffects.GLOWING, StatusEffectInstance.INFINITE, 0, false, false);
-            ((LivingEntity) entity).addStatusEffect(statusEffectInstance);
-
-            addEntityUuid(entity.getUuid());
+            ModEntityHelper.setAsRitualMob(entity, getPos());
         }
     }
 

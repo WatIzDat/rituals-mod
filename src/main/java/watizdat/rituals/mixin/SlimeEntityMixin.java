@@ -2,9 +2,12 @@ package watizdat.rituals.mixin;
 
 import com.llamalad7.mixinextras.sugar.Local;
 import net.minecraft.entity.EntityType;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.goal.ActiveTargetGoal;
 import net.minecraft.entity.ai.goal.Goal;
 import net.minecraft.entity.ai.goal.GoalSelector;
+import net.minecraft.entity.effect.StatusEffectInstance;
+import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.entity.mob.SlimeEntity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -51,6 +54,10 @@ public abstract class SlimeEntityMixin extends MobEntityMixin implements SlimeEn
             ModComponents.RITUAL_POLE_POS_COMPONENT.get(slimeEntity).set(ModComponents.RITUAL_POLE_POS_COMPONENT.get(this).getValue());
 
             ((MobEntityMixinAccess) slimeEntity).rituals$setAsRitualMob();
+
+            StatusEffectInstance statusEffectInstance = new StatusEffectInstance(
+                    StatusEffects.GLOWING, StatusEffectInstance.INFINITE, 0, false, false);
+            slimeEntity.addStatusEffect(statusEffectInstance);
 
             ModComponents.RITUAL_POLE_POS_COMPONENT.get(this).getBlockEntity(getWorld()).addEntityUuid(slimeEntity.getUuid());
         }

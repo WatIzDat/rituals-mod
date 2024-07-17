@@ -11,13 +11,16 @@
     "CrossbowItemMixin",
     "EndermanEntity$TeleportTowardsPlayerGoalMixin",
     "EndermanEntityMixin",
+    "EvokerEntity$ConjureFangsGoalMixin",
+    "EvokerEntity$SummonVexGoalMixin",
     "LivingEntityMixin",
     "MobEntityMixin",
     "PlayerEntityMixin",
     "ServerPlayerEntityMixin",
     "SlimeEntity$FaceTowardTargetGoalMixin",
     "SlimeEntity$RandomLookGoalMixin",
-    "SlimeEntityMixin"
+    "SlimeEntityMixin",
+    "VexEntity$ChargeTargetGoalMixin"
   ],
   "injectors": {
     "defaultRequire": 1

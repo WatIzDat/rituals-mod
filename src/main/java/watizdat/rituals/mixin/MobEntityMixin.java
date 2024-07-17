@@ -8,10 +8,7 @@ import net.minecraft.entity.ai.control.MoveControl;
 import net.minecraft.entity.ai.goal.*;
 import net.minecraft.entity.ai.pathing.EntityNavigation;
 import net.minecraft.entity.effect.StatusEffectInstance;
-import net.minecraft.entity.mob.BlazeEntity;
-import net.minecraft.entity.mob.HostileEntity;
-import net.minecraft.entity.mob.MobEntity;
-import net.minecraft.entity.mob.PathAwareEntity;
+import net.minecraft.entity.mob.*;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.world.Difficulty;
@@ -81,6 +78,8 @@ public abstract class MobEntityMixin extends LivingEntity implements MobEntityMi
             boolean hasCrossbowAttackGoal = false;
             boolean hasBlazeEntityShootFireballGoal = false;
 
+            boolean isVexEntity = ((MobEntity) (Object) this) instanceof VexEntity;
+
             for (PrioritizedGoal goal : goalSelector.getGoals()) {
                 if (goal.getGoal() instanceof FleeEntityGoal<?> ||
                         goal.getGoal() instanceof EscapeDangerGoal) {
@@ -101,10 +100,12 @@ public abstract class MobEntityMixin extends LivingEntity implements MobEntityMi
                 goalSelector.remove(goal);
             }
 
-            goalSelector.add(3, new MoveToRitualPoleGoal((PathAwareEntity) (Object) this, 1.1, 50));
+            if (!isVexEntity) {
+                goalSelector.add(3, new MoveToRitualPoleGoal((PathAwareEntity) (Object) this, 1.1, 50));
+            }
             goalSelector.add(2, new LookAtEntityGoal((MobEntity) (Object) this, PlayerEntity.class, 8f));
             goalSelector.add(2, new LookAroundGoal((MobEntity) (Object) this));
-            if (!hasCrossbowAttackGoal && !hasBlazeEntityShootFireballGoal) {
+            if (!hasCrossbowAttackGoal && !hasBlazeEntityShootFireballGoal && !isVexEntity) {
                 goalSelector.add(1, new MeleeAttackGoal((PathAwareEntity) (Object) this, 1d, false));
             } else if (hasCrossbowAttackGoal) {
                 goalSelector.add(2, new CrossbowAttackGoal<>((HostileEntity & CrossbowUser) (Object) this, 1.0, 48.0F));

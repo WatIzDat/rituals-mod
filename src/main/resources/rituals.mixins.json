@@ -16,6 +16,7 @@
     "PlayerEntityMixin",
     "ServerPlayerEntityMixin",
     "SlimeEntity$FaceTowardTargetGoalMixin",
+    "SlimeEntity$RandomLookGoalMixin",
     "SlimeEntityMixin"
   ],
   "injectors": {

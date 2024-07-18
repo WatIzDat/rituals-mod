@@ -13,6 +13,8 @@
     "EndermanEntityMixin",
     "EvokerEntity$ConjureFangsGoalMixin",
     "EvokerEntity$SummonVexGoalMixin",
+    "GuardianEntity$FireBeamGoalMixin",
+    "GuardianEntityMixin",
     "LivingEntityMixin",
     "MobEntityMixin",
     "PlayerEntityMixin",

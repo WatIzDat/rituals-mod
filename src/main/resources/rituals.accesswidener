@@ -3,4 +3,5 @@ accessWidener v2 named
 accessible class net/minecraft/entity/mob/BlazeEntity$ShootFireballGoal
 accessible class net/minecraft/entity/mob/EndermanEntity$TeleportTowardsPlayerGoal
 accessible class net/minecraft/entity/mob/EvokerEntity$SummonVexGoal
+accessible class net/minecraft/entity/mob/GuardianEntity$FireBeamGoal
 accessible method net/minecraft/entity/mob/EndermanEntity teleportTo (DDD)Z

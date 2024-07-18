@@ -75,14 +75,17 @@ public abstract class MobEntityMixin extends LivingEntity implements MobEntityMi
         if (((MobEntity) (Object) this) instanceof PathAwareEntity) {
             List<Goal> goalsToRemove = new ArrayList<>();
 
+            // TODO: Could convert these to instanceof checks
             boolean hasCrossbowAttackGoal = false;
             boolean hasBlazeEntityShootFireballGoal = false;
 
             boolean isVexEntity = ((MobEntity) (Object) this) instanceof VexEntity;
+            boolean isGuardianEntity = ((MobEntity) (Object) this) instanceof GuardianEntity;
 
             for (PrioritizedGoal goal : goalSelector.getGoals()) {
                 if (goal.getGoal() instanceof FleeEntityGoal<?> ||
-                        goal.getGoal() instanceof EscapeDangerGoal) {
+                    goal.getGoal() instanceof EscapeDangerGoal ||
+                    goal.getGoal() instanceof GuardianEntity.FireBeamGoal) {
 
                     goalsToRemove.add(goal.getGoal());
                 }
@@ -101,17 +104,21 @@ public abstract class MobEntityMixin extends LivingEntity implements MobEntityMi
             }
 
             if (!isVexEntity) {
-                goalSelector.add(3, new MoveToRitualPoleGoal((PathAwareEntity) (Object) this, 1.1, 50));
+                goalSelector.add(isGuardianEntity ? 10 : 3, new MoveToRitualPoleGoal((PathAwareEntity) (Object) this, 1.1, 50));
             }
-            goalSelector.add(2, new LookAtEntityGoal((MobEntity) (Object) this, PlayerEntity.class, 8f));
-            goalSelector.add(2, new LookAroundGoal((MobEntity) (Object) this));
-            if (!hasCrossbowAttackGoal && !hasBlazeEntityShootFireballGoal && !isVexEntity) {
+            if (!isGuardianEntity) {
+                goalSelector.add(2, new LookAtEntityGoal((MobEntity) (Object) this, PlayerEntity.class, 8f));
+                goalSelector.add(2, new LookAroundGoal((MobEntity) (Object) this));
+            }
+            if (!hasCrossbowAttackGoal && !hasBlazeEntityShootFireballGoal && !isVexEntity && !isGuardianEntity) {
                 goalSelector.add(1, new MeleeAttackGoal((PathAwareEntity) (Object) this, 1d, false));
             } else if (hasCrossbowAttackGoal) {
                 goalSelector.add(2, new CrossbowAttackGoal<>((HostileEntity & CrossbowUser) (Object) this, 1.0, 48.0F));
             } else if (hasBlazeEntityShootFireballGoal) {
                 goalSelector.add(1, new MeleeAttackGoal((PathAwareEntity) (Object) this, 1d, false));
                 goalSelector.add(2, new BlazeEntity.ShootFireballGoal((BlazeEntity) (Object) this));
+            } else if (isGuardianEntity) {
+                goalSelector.add(1, new GuardianEntity.FireBeamGoal((GuardianEntity) (Object) this));
             }
             targetSelector.add(1, new ActiveTargetGoal<>((MobEntity) (Object) this, PlayerEntity.class, false));
         }

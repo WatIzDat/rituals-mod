@@ -2,13 +2,9 @@ package watizdat.rituals.block.entity;
 
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.block.BlockState;
+import net.minecraft.block.Blocks;
 import net.minecraft.block.entity.BlockEntity;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityType;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.SpawnReason;
-import net.minecraft.entity.effect.StatusEffectInstance;
-import net.minecraft.entity.effect.StatusEffects;
+import net.minecraft.entity.*;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.particle.DustParticleEffect;
@@ -21,7 +17,6 @@ import net.minecraft.world.RaycastContext;
 import net.minecraft.world.World;
 import org.joml.Vector3d;
 import watizdat.rituals.Rituals;
-import watizdat.rituals.access.*;
 import watizdat.rituals.entity.ModEntityHelper;
 import watizdat.rituals.enums.RitualState;
 import watizdat.rituals.init.ModBlockEntityTypes;
@@ -199,10 +194,33 @@ public class RitualPoleBlockEntity extends BlockEntity {
 
         boolean canSpawn = true;
 
+        boolean isWaterCreature =
+                entityType.getSpawnGroup() == SpawnGroup.WATER_AMBIENT ||
+                entityType.getSpawnGroup() == SpawnGroup.WATER_CREATURE ||
+                entityType.getSpawnGroup() == SpawnGroup.UNDERGROUND_WATER_CREATURE ||
+                entityType.getSpawnGroup() == SpawnGroup.AXOLOTLS ||
+                entityType == EntityType.GUARDIAN ||
+                entityType == EntityType.ELDER_GUARDIAN ||
+                entityType == EntityType.TURTLE ||
+                entityType == EntityType.TADPOLE;
+
         for (int i = 0; i < height; i++) {
             int distance = i + 1;
 
-            if (!player.getWorld().getBlockState(pos.up(distance)).isTransparent(player.getWorld(), pos.up(distance))) {
+            // Water creatures spawn in the water rather than on top of it
+            if (isWaterCreature) {
+                distance = i;
+            }
+
+//            if (!player.getWorld().getBlockState(pos.up(distance)).isTransparent(player.getWorld(), pos.up(distance))) {
+//                canSpawn = false;
+//            }
+
+            if (!isWaterCreature && !player.getWorld().getBlockState(pos.up(distance)).isAir()) {
+                canSpawn = false;
+            }
+
+            if (isWaterCreature && !player.getWorld().getBlockState(pos.up(distance)).isOf(Blocks.WATER)) {
                 canSpawn = false;
             }
         }

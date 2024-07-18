@@ -20,6 +20,7 @@ import watizdat.rituals.Rituals;
 import watizdat.rituals.entity.ModEntityHelper;
 import watizdat.rituals.enums.RitualState;
 import watizdat.rituals.init.ModBlockEntityTypes;
+import watizdat.rituals.init.ModTags;
 import watizdat.rituals.state.ModComponents;
 import watizdat.rituals.state.component.EntityTypesKilledComponent;
 
@@ -195,14 +196,11 @@ public class RitualPoleBlockEntity extends BlockEntity {
         boolean canSpawn = true;
 
         boolean isWaterCreature =
+                entityType.isIn(ModTags.AQUATIC) ||
                 entityType.getSpawnGroup() == SpawnGroup.WATER_AMBIENT ||
                 entityType.getSpawnGroup() == SpawnGroup.WATER_CREATURE ||
                 entityType.getSpawnGroup() == SpawnGroup.UNDERGROUND_WATER_CREATURE ||
-                entityType.getSpawnGroup() == SpawnGroup.AXOLOTLS ||
-                entityType == EntityType.GUARDIAN ||
-                entityType == EntityType.ELDER_GUARDIAN ||
-                entityType == EntityType.TURTLE ||
-                entityType == EntityType.TADPOLE;
+                entityType.getSpawnGroup() == SpawnGroup.AXOLOTLS;
 
         for (int i = 0; i < height; i++) {
             int distance = i + 1;
@@ -216,11 +214,9 @@ public class RitualPoleBlockEntity extends BlockEntity {
 //                canSpawn = false;
 //            }
 
-            if (!isWaterCreature && !player.getWorld().getBlockState(pos.up(distance)).isAir()) {
-                canSpawn = false;
-            }
+            if ((!isWaterCreature && !player.getWorld().getBlockState(pos.up(distance)).isAir()) ||
+                    (isWaterCreature && !player.getWorld().getBlockState(pos.up(distance)).isOf(Blocks.WATER))) {
 
-            if (isWaterCreature && !player.getWorld().getBlockState(pos.up(distance)).isOf(Blocks.WATER)) {
                 canSpawn = false;
             }
         }

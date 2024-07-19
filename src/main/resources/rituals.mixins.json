@@ -19,11 +19,13 @@
     "LivingEntityMixin",
     "MobEntityMixin",
     "PlayerEntityMixin",
+    "ProjectileAttackGoalMixin",
     "ServerPlayerEntityMixin",
     "SlimeEntity$FaceTowardTargetGoalMixin",
     "SlimeEntity$RandomLookGoalMixin",
     "SlimeEntityMixin",
-    "VexEntity$ChargeTargetGoalMixin"
+    "VexEntity$ChargeTargetGoalMixin",
+    "WitchEntityMixin"
   ],
   "injectors": {
     "defaultRequire": 1

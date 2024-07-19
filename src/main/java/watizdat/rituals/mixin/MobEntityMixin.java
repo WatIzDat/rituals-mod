@@ -15,6 +15,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.world.Difficulty;
 import net.minecraft.world.World;
+import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.*;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -41,6 +42,8 @@ public abstract class MobEntityMixin extends LivingEntity implements MobEntityMi
     @Shadow protected EntityNavigation navigation;
 
     @Shadow protected MoveControl moveControl;
+
+    @Shadow public abstract @Nullable LivingEntity getTarget();
 
     @Override
     public boolean rituals$isRitualMob() {
@@ -85,6 +88,7 @@ public abstract class MobEntityMixin extends LivingEntity implements MobEntityMi
 
             boolean isVexEntity = ((MobEntity) (Object) this) instanceof VexEntity;
             boolean isGuardianEntity = ((MobEntity) (Object) this) instanceof GuardianEntity;
+            boolean isWitchEntity = ((MobEntity) (Object) this) instanceof WitchEntity;
 
             for (PrioritizedGoal goal : goalSelector.getGoals()) {
                 if (goal.getGoal() instanceof FleeEntityGoal<?> ||
@@ -118,7 +122,13 @@ public abstract class MobEntityMixin extends LivingEntity implements MobEntityMi
                 goalSelector.add(2, new LookAtEntityGoal((MobEntity) (Object) this, PlayerEntity.class, 8f));
                 goalSelector.add(2, new LookAroundGoal((MobEntity) (Object) this));
             }
-            if (!hasCrossbowAttackGoal && !hasBowAttackGoal && !hasBlazeEntityShootFireballGoal && !isVexEntity && !isGuardianEntity) {
+            if (!hasCrossbowAttackGoal &&
+                !hasBowAttackGoal &&
+                !hasBlazeEntityShootFireballGoal &&
+                !isVexEntity &&
+                !isGuardianEntity &&
+                !isWitchEntity) {
+
                 goalSelector.add(1, new MeleeAttackGoal((PathAwareEntity) (Object) this, 1d, false));
             } else if (hasCrossbowAttackGoal) {
                 goalSelector.add(2, new CrossbowAttackGoal<>((HostileEntity & CrossbowUser) (Object) this, 1.0, 48.0F));
@@ -129,6 +139,8 @@ public abstract class MobEntityMixin extends LivingEntity implements MobEntityMi
                 goalSelector.add(2, new BlazeEntity.ShootFireballGoal((BlazeEntity) (Object) this));
             } else if (isGuardianEntity) {
                 goalSelector.add(1, new GuardianEntity.FireBeamGoal((GuardianEntity) (Object) this));
+            } else if (isWitchEntity) {
+                goalSelector.add(1, new ProjectileAttackGoal((WitchEntity) (Object) this, 1.0, 30, 10.0F));
             }
             targetSelector.add(1, new ActiveTargetGoal<>((MobEntity) (Object) this, PlayerEntity.class, false));
         }

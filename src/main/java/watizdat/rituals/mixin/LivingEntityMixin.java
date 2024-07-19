@@ -10,6 +10,7 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.attribute.AttributeContainer;
 import net.minecraft.entity.attribute.EntityAttribute;
 import net.minecraft.entity.attribute.EntityAttributes;
+import net.minecraft.entity.mob.ElderGuardianEntity;
 import net.minecraft.entity.mob.GuardianEntity;
 import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.entity.mob.SlimeEntity;
@@ -109,7 +110,9 @@ public abstract class LivingEntityMixin extends Entity {
 			return true;
 		}
 
+		// TODO: Make this iterative/better
 		boolean twoBlocksInTheWay = false;
+		boolean threeBlocksInTheWay = false;
 
 		Vec3d start = new Vec3d(this.getX(), this.getEyeY(), this.getZ());
 		Vec3d end = new Vec3d(target.getX(), target.getEyeY(), target.getZ());
@@ -122,10 +125,10 @@ public abstract class LivingEntityMixin extends Entity {
 				this));
 
 		if (hitResult1.getType() == HitResult.Type.BLOCK) {
-			Vec3d startWithOffset = hitResult1.getPos().add(hitResult1.getPos().subtract(start).normalize().multiply(1.5d));
+			Vec3d startWithOffset1 = hitResult1.getPos().add(hitResult1.getPos().subtract(start).normalize().multiply(1.5d));
 
 			HitResult hitResult2 = this.getWorld().raycast(new RaycastContext(
-					startWithOffset,
+					startWithOffset1,
 					end,
 					RaycastContext.ShapeType.COLLIDER,
 					RaycastContext.FluidHandling.NONE,
@@ -134,8 +137,23 @@ public abstract class LivingEntityMixin extends Entity {
 			if (hitResult2.getType() == HitResult.Type.BLOCK) {
 				twoBlocksInTheWay = true;
 
-				System.out.println("two blocks in the way");
+				Vec3d startWithOffset2 = hitResult2.getPos().add(hitResult2.getPos().subtract(start).normalize().multiply(1.5d));
+
+				HitResult hitResult3 = this.getWorld().raycast(new RaycastContext(
+						startWithOffset2,
+						end,
+						RaycastContext.ShapeType.COLLIDER,
+						RaycastContext.FluidHandling.NONE,
+						this));
+
+				if (hitResult3.getType() == HitResult.Type.BLOCK) {
+					threeBlocksInTheWay = true;
+				}
 			}
+		}
+
+		if (((LivingEntity) (Object) this) instanceof ElderGuardianEntity) {
+			return !original && !threeBlocksInTheWay;
 		}
 
 		return !original && !twoBlocksInTheWay;

@@ -31,8 +31,17 @@ public abstract class GuardianEntityMixin extends MobEntityMixin {
         original.call(instance, priority, goal);
     }
 
-    @ModifyReturnValue(method = "getWarmupTime", at = @At("RETURN"))
-    private int rituals$decreaseWarmupTimeForRitualMobs(int original) {
+    @ModifyExpressionValue(method = "tickMovement", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/mob/GuardianEntity;getWarmupTime()I"))
+    private int rituals$decreaseWarmupTimeForRitualMobsTickMovementCallSite(int original) {
+        if (rituals$isRitualMob()) {
+            return original / 4;
+        }
+
+        return original;
+    }
+
+    @ModifyExpressionValue(method = "getBeamProgress", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/mob/GuardianEntity;getWarmupTime()I"))
+    private int rituals$decreaseWarmupTimeForRitualMobsGetBeamProgressCallSite(int original) {
         if (rituals$isRitualMob()) {
             return original / 4;
         }

@@ -42,8 +42,8 @@ public abstract class GuardianEntityMixin extends MobEntityMixin {
 
     @Override
     public void rituals$setAsRitualMob() {
-        super.rituals$setAsRitualMob();
-
         targetSelector.remove(activeTargetGoal);
+
+        super.rituals$setAsRitualMob();
     }
 }

@@ -1,5 +1,7 @@
 package watizdat.rituals.mixin;
 
+import com.llamalad7.mixinextras.injector.ModifyReturnValue;
+import com.llamalad7.mixinextras.sugar.Local;
 import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.entity.Entity;
@@ -8,12 +10,16 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.attribute.AttributeContainer;
 import net.minecraft.entity.attribute.EntityAttribute;
 import net.minecraft.entity.attribute.EntityAttributes;
+import net.minecraft.entity.mob.GuardianEntity;
 import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.entity.mob.SlimeEntity;
 import net.minecraft.entity.passive.BatEntity;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.util.hit.HitResult;
+import net.minecraft.util.math.Vec3d;
+import net.minecraft.world.RaycastContext;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
@@ -87,5 +93,51 @@ public abstract class LivingEntityMixin extends Entity {
 				}
 			}
 		}
+	}
+
+	@ModifyReturnValue(method = "canSee", at = @At("RETURN"))
+	private boolean rituals$allowRitualGuardianToSeeThroughOneBlock(boolean original, @Local(argsOnly = true) Entity target) {
+		if (!(((LivingEntity) (Object) this) instanceof GuardianEntity)) {
+			return original;
+		}
+
+		if (!((MobEntityMixinAccess) this).rituals$isRitualMob()) {
+			return original;
+		}
+
+		if (original) {
+			return true;
+		}
+
+		boolean twoBlocksInTheWay = false;
+
+		Vec3d start = new Vec3d(this.getX(), this.getEyeY(), this.getZ());
+		Vec3d end = new Vec3d(target.getX(), target.getEyeY(), target.getZ());
+
+		HitResult hitResult1 = this.getWorld().raycast(new RaycastContext(
+				start,
+				end,
+				RaycastContext.ShapeType.COLLIDER,
+				RaycastContext.FluidHandling.NONE,
+				this));
+
+		if (hitResult1.getType() == HitResult.Type.BLOCK) {
+			Vec3d startWithOffset = hitResult1.getPos().add(hitResult1.getPos().subtract(start).normalize().multiply(1.5d));
+
+			HitResult hitResult2 = this.getWorld().raycast(new RaycastContext(
+					startWithOffset,
+					end,
+					RaycastContext.ShapeType.COLLIDER,
+					RaycastContext.FluidHandling.NONE,
+					this));
+
+			if (hitResult2.getType() == HitResult.Type.BLOCK) {
+				twoBlocksInTheWay = true;
+
+				System.out.println("two blocks in the way");
+			}
+		}
+
+		return !original && !twoBlocksInTheWay;
 	}
 }

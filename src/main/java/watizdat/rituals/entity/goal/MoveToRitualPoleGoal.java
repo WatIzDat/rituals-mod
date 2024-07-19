@@ -28,11 +28,6 @@ public class MoveToRitualPoleGoal extends MoveToTargetPosGoal {
     protected boolean isTargetPos(WorldView world, BlockPos pos) {
         boolean isTarget = ModComponents.RITUAL_POLE_POS_COMPONENT.get(mob).getValue().equals(pos);
 
-        if (isTarget) {
-            System.out.println(pos.toShortString());
-            System.out.println("is target");
-        }
-
         return isTarget;
     }
 

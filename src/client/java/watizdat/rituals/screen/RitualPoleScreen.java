@@ -4,6 +4,7 @@ import io.wispforest.owo.ui.base.BaseOwoScreen;
 import io.wispforest.owo.ui.component.Components;
 import io.wispforest.owo.ui.container.Containers;
 import io.wispforest.owo.ui.container.FlowLayout;
+import io.wispforest.owo.ui.container.GridLayout;
 import io.wispforest.owo.ui.container.ScrollContainer;
 import io.wispforest.owo.ui.core.*;
 import net.fabricmc.api.EnvType;
@@ -18,6 +19,7 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
 import watizdat.rituals.Rituals;
+import watizdat.rituals.block.entity.RitualPoleBlockEntity;
 import watizdat.rituals.enums.RitualState;
 import watizdat.rituals.network.ModNetworkConstants;
 
@@ -86,14 +88,21 @@ public class RitualPoleScreen extends BaseOwoScreen<FlowLayout> {
                 flowLayout.horizontalAlignment(HorizontalAlignment.CENTER);
                 flowLayout.verticalAlignment(VerticalAlignment.CENTER);
             }, identifier -> {
-                FlowLayout entry = Containers.horizontalFlow(Sizing.fill(100), Sizing.content(40));
+//                FlowLayout entry = Containers.horizontalFlow(Sizing.fill(100), Sizing.content(40));
+                GridLayout entry = Containers.grid(Sizing.fill(100), Sizing.fixed(50), 3, 1);
 
-                entry.horizontalAlignment(HorizontalAlignment.CENTER);
-                entry.verticalAlignment(VerticalAlignment.CENTER);
+//                entry.horizontalAlignment(HorizontalAlignment.CENTER);
+//                entry.verticalAlignment(VerticalAlignment.CENTER);
 
-                entry.child(Components.entity(Sizing.fixed(25), Registries.ENTITY_TYPE.get(identifier), null)
-                        .margins(Insets.right(40)));
-                entry.child(Components.label(Registries.ENTITY_TYPE.get(identifier).getName()));
+                entry.child(Components.entity(Sizing.fixed(25), Registries.ENTITY_TYPE.get(identifier), null),
+                        0, 0);
+
+                entry.child(Components.label(Registries.ENTITY_TYPE.get(identifier).getName()), 1, 0);
+
+                entry.child(Components.list(RitualPoleBlockEntity.ENTITY_TYPE_LOOT_MAP.get(Registries.ENTITY_TYPE.get(identifier)), flowLayout -> {
+                    flowLayout.horizontalAlignment(HorizontalAlignment.RIGHT);
+                    flowLayout.verticalAlignment(VerticalAlignment.BOTTOM);
+                }, Components::item, false), 2, 0);
 
                 return entry;
             }, true));

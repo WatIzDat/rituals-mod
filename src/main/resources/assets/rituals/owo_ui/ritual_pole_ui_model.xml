@@ -1,0 +1,166 @@
+<owo-ui xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/wisp-forest/owo-lib/1.20/owo-ui.xsd">
+    <components>
+        <flow-layout direction="vertical">
+            <children>
+                <flow-layout direction="vertical">
+                    <children>
+                        <label>
+                            <text translate="true">gui.rituals.ritual_pole.title</text>
+
+                            <margins>
+                                <bottom>10</bottom>
+                            </margins>
+                        </label>
+                        
+                        <label>
+                            <text translate="true">gui.rituals.ritual_pole.mobs_killed_message</text>
+                            
+                            <margins>
+                                <bottom>10</bottom>
+                            </margins>
+                        </label>
+                        
+                        <scroll direction="vertical">
+                            <flow-layout direction="vertical" id="entity-types-killed-list-container">
+                                <children />
+
+                                <padding>
+                                    <all>1</all>
+                                </padding>
+                            </flow-layout>
+
+                            <sizing>
+                                <horizontal method="fill">100</horizontal>
+                                <vertical method="fixed">150</vertical>
+                            </sizing>
+
+                            <scrollbar-thiccness>5</scrollbar-thiccness>
+                            <fixed-scrollbar-length>0</fixed-scrollbar-length>
+
+                            <surface>
+                                <vanilla-translucent />
+                            </surface>
+
+                            <margins>
+                                <bottom>10</bottom>
+                            </margins>
+                        </scroll>
+
+                        <label>
+                            <text translate="true">gui.rituals.ritual_pole.revenge_warning_message</text>
+                            <horizontal-text-alignment>left</horizontal-text-alignment>
+
+                            <sizing>
+                                <horizontal method="fill">100</horizontal>
+                            </sizing>
+                        </label>
+
+                        <flow-layout direction="horizontal">
+                            <children>
+                                <button id="cancel-button">
+                                    <text translate="true">gui.rituals.ritual_pole.cancel_button</text>
+                                </button>
+
+                                <button id="start-ritual-button">
+                                    <text translate="true">gui.rituals.ritual_pole.start_ritual_button</text>
+
+                                    <margins>
+                                        <left>10</left>
+                                    </margins>
+                                </button>
+                            </children>
+
+                            <sizing>
+                                <horizontal method="fill">100</horizontal>
+                                <vertical method="content">0</vertical>
+                            </sizing>
+
+                            <horizontal-alignment>right</horizontal-alignment>
+                        </flow-layout>
+                    </children>
+
+                    <sizing>
+                        <horizontal method="fixed">300</horizontal>
+                        <vertical method="content">10</vertical>
+                    </sizing>
+                    
+                    <horizontal-alignment>center</horizontal-alignment>
+                    <vertical-alignment>center</vertical-alignment>
+
+                    <surface>
+                        <panel dark="true" />
+                    </surface>
+
+                    <padding>
+                        <horizontal>10</horizontal>
+                    </padding>
+                </flow-layout>
+            </children>
+
+            <horizontal-alignment>center</horizontal-alignment>
+            <vertical-alignment>center</vertical-alignment>
+
+            <surface>
+                <vanilla-translucent />
+            </surface>
+        </flow-layout>
+    </components>
+    
+    <templates>
+<!--        <entity-types-killed-list-entry>-->
+<!--            -->
+<!--        </entity-types-killed-list-entry>-->
+
+        <template name="entity-types-killed-list-entry">
+            <grid-layout rows="1" columns="3">
+                <children>
+                    <entity type="{{entityType}}" row="0" column="0">
+                        <sizing>
+                            <horizontal method="fixed">30</horizontal>
+                            <vertical method="fixed">30</vertical>
+                        </sizing>
+                        <scale>0.75</scale>
+                    </entity>
+
+                    <label row="0" column="1">
+                        <text translate="true">{{entityTypeName}}</text>
+                    </label>
+
+                    <flow-layout direction="horizontal" id="entity-type-loot" row="0" column="2">
+                        <children />
+
+                        <horizontal-alignment>right</horizontal-alignment>
+                        <vertical-alignment>bottom</vertical-alignment>
+
+                        <sizing>
+                            <horizontal method="content">0</horizontal>
+                            <vertical method="fixed">30</vertical>
+                        </sizing>
+                        
+                        <positioning type="relative">100,0</positioning>
+                    </flow-layout>
+                </children>
+
+                <sizing>
+                    <horizontal method="fill">100</horizontal>
+                    <vertical method="fixed">40</vertical>
+                </sizing>
+
+                <padding>
+                    <vertical>5</vertical>
+                </padding>
+
+                <horizontal-alignment>center</horizontal-alignment>
+                <vertical-alignment>center</vertical-alignment>
+            </grid-layout>
+        </template>
+
+        <template name="entity-type-loot-item">
+            <item>
+                <stack>{{item}}</stack>
+                <show-overlay>true</show-overlay>
+            </item>
+        </template>
+    </templates>
+</owo-ui>

@@ -10,6 +10,7 @@ import net.minecraft.util.math.BlockPos;
 import watizdat.rituals.enums.RitualState;
 import watizdat.rituals.network.ModNetworkConstants;
 import watizdat.rituals.screen.RitualPoleScreen;
+import watizdat.rituals.screen.RitualPoleUIModelScreen;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,7 +24,7 @@ public class RitualsClient implements ClientModInitializer {
 			RitualState ritualState = buf.readEnumConstant(RitualState.class);
 
 			client.execute(() -> {
-				client.setScreen(new RitualPoleScreen(ritualState, entityTypesKilled, pos));
+				client.setScreen(new RitualPoleUIModelScreen(ritualState, entityTypesKilled, pos));
 			});
 		}));
 

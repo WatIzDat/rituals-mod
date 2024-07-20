@@ -6,6 +6,8 @@ import net.minecraft.block.Blocks;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.entity.*;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.particle.DustParticleEffect;
 import net.minecraft.server.world.ServerWorld;
@@ -27,6 +29,12 @@ import watizdat.rituals.state.component.EntityTypesKilledComponent;
 import java.util.*;
 
 public class RitualPoleBlockEntity extends BlockEntity {
+    public static final HashMap<EntityType<?>, List<ItemStack>> ENTITY_TYPE_LOOT_MAP = new HashMap<>(Map.ofEntries(
+            Map.entry(EntityType.ALLAY, List.of(new ItemStack(Items.DIAMOND, 16))),
+            Map.entry(EntityType.AXOLOTL, List.of(new ItemStack(Items.GLOW_BERRIES, 64))),
+            Map.entry(EntityType.BAT, List.of())
+    ));
+
     private RitualState ritualState = RitualState.NOT_STARTED;
     private List<UUID> entityUuids = new ArrayList<>();
     private UUID playerUuid = new UUID(0L, 0L);

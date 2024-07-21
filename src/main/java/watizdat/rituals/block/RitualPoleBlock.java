@@ -20,6 +20,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 import watizdat.rituals.block.entity.RitualPoleBlockEntity;
+import watizdat.rituals.enums.RitualPoleType;
 import watizdat.rituals.enums.RitualState;
 import watizdat.rituals.init.ModBlockEntityTypes;
 import watizdat.rituals.network.ModNetworkConstants;
@@ -28,10 +29,12 @@ import watizdat.rituals.state.component.EntityTypesKilledComponent;
 
 public class RitualPoleBlock extends BlockWithEntity {
     public static final EnumProperty<DoubleBlockHalf> HALF = EnumProperty.of("half", DoubleBlockHalf.class);
+    public static final EnumProperty<RitualPoleType> TYPE = EnumProperty.of("type", RitualPoleType.class);
 
     public RitualPoleBlock(Settings settings) {
         super(settings);
         setDefaultState(getDefaultState().with(HALF, DoubleBlockHalf.LOWER));
+        setDefaultState(getDefaultState().with(TYPE, RitualPoleType.OVERWORLD));
     }
 
     @Override
@@ -58,7 +61,7 @@ public class RitualPoleBlock extends BlockWithEntity {
 
     @Override
     protected void appendProperties(StateManager.Builder<Block, BlockState> builder) {
-        builder.add(HALF);
+        builder.add(HALF).add(TYPE);
     }
 
     @Nullable

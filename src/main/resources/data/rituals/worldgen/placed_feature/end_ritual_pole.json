@@ -1,9 +1,9 @@
 {
-  "feature": "rituals:ritual_pole",
+  "feature": "rituals:end_ritual_pole",
   "placement": [
     {
       "type": "minecraft:rarity_filter",
-      "chance": 2
+      "chance": 48
     },
     {
       "type": "minecraft:in_square"

@@ -11,6 +11,7 @@ import net.minecraft.world.StructureWorldAccess;
 import net.minecraft.world.gen.feature.Feature;
 import net.minecraft.world.gen.feature.util.FeatureContext;
 import watizdat.rituals.block.RitualPoleBlock;
+import watizdat.rituals.enums.RitualPoleType;
 import watizdat.rituals.feature.config.RitualPoleFeatureConfig;
 import watizdat.rituals.init.ModBlocks;
 import watizdat.rituals.init.ModTags;
@@ -26,6 +27,8 @@ public class RitualPoleFeature extends Feature<RitualPoleFeatureConfig> {
         BlockPos origin = context.getOrigin();
         RitualPoleFeatureConfig config = context.getConfig();
 
+        System.out.println(config.type());
+
         BlockState blockState = ModBlocks.RITUAL_POLE.getDefaultState();
 
         BlockPos testPos = new BlockPos(origin);
@@ -37,12 +40,18 @@ public class RitualPoleFeature extends Feature<RitualPoleFeatureConfig> {
             (world.getBlockState(testPos.up()).isOf(Blocks.AIR) || world.getBlockState(testPos.up()).isOf(Blocks.WATER)) &&
             testPos.up().getY() <= world.getTopY()) {
 
-            if (config.isNetherPole() && world.getBlockState(testPos.down()).isIn(ModTags.NETHER_RITUAL_POLE_NOT_PLACEABLE)) {
+            if ((config.type() == RitualPoleType.NETHER && world.getBlockState(testPos.down()).isIn(ModTags.NETHER_RITUAL_POLE_NOT_PLACEABLE)) ||
+                 config.type() == RitualPoleType.OVERWORLD && !world.getBlockState(testPos.down()).getFluidState().isEmpty()) {
+
                 return false;
             }
 
-            world.setBlockState(testPos, blockState, Block.NOTIFY_ALL);
-            world.setBlockState(testPos.up(), blockState.with(RitualPoleBlock.HALF, DoubleBlockHalf.UPPER), Block.NOTIFY_ALL);
+            world.setBlockState(testPos,
+                    blockState.with(RitualPoleBlock.TYPE, config.type()), Block.NOTIFY_ALL);
+
+            world.setBlockState(testPos.up(),
+                    blockState.with(RitualPoleBlock.HALF, DoubleBlockHalf.UPPER)
+                              .with(RitualPoleBlock.TYPE, config.type()), Block.NOTIFY_ALL);
 
             return true;
         }

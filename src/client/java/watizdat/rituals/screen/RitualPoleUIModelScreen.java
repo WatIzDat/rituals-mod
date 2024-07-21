@@ -68,10 +68,12 @@ public class RitualPoleUIModelScreen extends BaseUIModelScreen<FlowLayout> {
             FlowLayout entityTypeLoot = entityTypesKilledListEntry.childById(FlowLayout.class, "entity-type-loot");
 
             for (ItemStack itemStack : RitualPoleBlockEntity.ENTITY_TYPE_LOOT_MAP.get(Registries.ENTITY_TYPE.get(entityTypeId))) {
-                ItemComponent itemComponent = model.expandTemplate(
-                        ItemComponent.class,
+                FlowLayout itemComponent = model.expandTemplate(
+                        FlowLayout.class,
                         "entity-type-loot-item",
-                        Map.of("item", Registries.ITEM.getId(itemStack.getItem()).toString()));
+                        Map.of(
+                                "item", Registries.ITEM.getId(itemStack.getItem()).toString(),
+                                "count", String.valueOf(itemStack.getCount())));
 
                 entityTypeLoot.child(itemComponent);
             }

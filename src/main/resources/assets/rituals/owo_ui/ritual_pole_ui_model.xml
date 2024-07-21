@@ -139,6 +139,10 @@
                         </sizing>
                         
                         <positioning type="relative">100,0</positioning>
+
+                        <margins>
+                            <right>10</right>
+                        </margins>
                     </flow-layout>
                 </children>
 
@@ -157,10 +161,30 @@
         </template>
 
         <template name="entity-type-loot-item">
-            <item>
-                <stack>{{item}}</stack>
-                <show-overlay>true</show-overlay>
-            </item>
+            <flow-layout direction="horizontal">
+                <children>
+                    <item>
+                        <stack>{{item}}</stack>
+                        <show-overlay>true</show-overlay>
+<!--                        <positioning type="relative">50,100</positioning>-->
+                    </item>
+
+                    <label>
+                        <text>x{{count}}</text>
+                        <shadow>true</shadow>
+
+                        <positioning type="relative">40,100</positioning>
+                        <z-index>1000</z-index>
+                    </label>
+                </children>
+
+                <vertical-alignment>bottom</vertical-alignment>
+
+                <sizing>
+                    <horizontal method="fixed">30</horizontal>
+                    <vertical method="fill">100</vertical>
+                </sizing>
+            </flow-layout>
         </template>
     </templates>
 </owo-ui>

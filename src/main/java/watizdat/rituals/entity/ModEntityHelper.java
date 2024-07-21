@@ -1,13 +1,16 @@
 package watizdat.rituals.entity;
 
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.SpawnGroup;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.util.math.BlockPos;
 import watizdat.rituals.access.MobEntityMixinAccess;
 import watizdat.rituals.block.entity.RitualPoleBlockEntity;
 import watizdat.rituals.init.ModStatusEffects;
+import watizdat.rituals.init.ModTags;
 import watizdat.rituals.state.ModComponents;
 
 public class ModEntityHelper {
@@ -25,5 +28,13 @@ public class ModEntityHelper {
         ((LivingEntity) entity).addStatusEffect(glowingStatusEffect);
 
         ((RitualPoleBlockEntity) entity.getWorld().getBlockEntity(ritualPolePos)).addEntityUuid(entity.getUuid());
+    }
+
+    public static boolean isWaterCreature(EntityType<?> entityType) {
+        return entityType.isIn(ModTags.LIVES_IN_OVERWORLD_WATER) ||
+               entityType.getSpawnGroup() == SpawnGroup.WATER_AMBIENT ||
+               entityType.getSpawnGroup() == SpawnGroup.WATER_CREATURE ||
+               entityType.getSpawnGroup() == SpawnGroup.UNDERGROUND_WATER_CREATURE ||
+               entityType.getSpawnGroup() == SpawnGroup.AXOLOTLS;
     }
 }

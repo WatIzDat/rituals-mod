@@ -10,7 +10,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.particle.DustParticleEffect;
-import net.minecraft.registry.Registries;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
@@ -20,7 +19,9 @@ import net.minecraft.world.RaycastContext;
 import net.minecraft.world.World;
 import org.joml.Vector3d;
 import watizdat.rituals.Rituals;
+import watizdat.rituals.block.RitualPoleBlock;
 import watizdat.rituals.entity.ModEntityHelper;
+import watizdat.rituals.enums.RitualPoleType;
 import watizdat.rituals.enums.RitualState;
 import watizdat.rituals.init.ModBlockEntityTypes;
 import watizdat.rituals.init.ModTags;
@@ -33,7 +34,9 @@ public class RitualPoleBlockEntity extends BlockEntity {
     public static final HashMap<EntityType<?>, List<ItemStack>> ENTITY_TYPE_LOOT_MAP = new HashMap<>(Map.ofEntries(
             Map.entry(EntityType.ALLAY, List.of(new ItemStack(Items.DIAMOND, 16))),
             Map.entry(EntityType.AXOLOTL, List.of(new ItemStack(Items.GLOW_BERRIES, 64))),
-            Map.entry(EntityType.BAT, List.of())
+            Map.entry(EntityType.BAT, List.of()),
+            Map.entry(EntityType.PIGLIN, List.of(new ItemStack(Items.GOLD_INGOT, 32))),
+            Map.entry(EntityType.SHULKER, List.of(new ItemStack(Items.SHULKER_SHELL, 32)))
     ));
 
     private RitualState ritualState = RitualState.NOT_STARTED;
@@ -87,6 +90,10 @@ public class RitualPoleBlockEntity extends BlockEntity {
         EntityTypesKilledComponent entityTypesKilled = ModComponents.ENTITY_TYPES_KILLED_COMPONENT.get(player);
 
         for (EntityType<?> entityType : entityTypesKilled.getValue()) {
+            if (!isEntityValidForRitualPoleType(entityType, getWorld().getBlockState(getPos()).get(RitualPoleBlock.TYPE))) {
+                continue;
+            }
+
             List<BlockPos> validSpawnPositions = new ArrayList<>();
             Set<Pair<Integer, Integer>> duplicates = new HashSet<>();
 
@@ -155,6 +162,10 @@ public class RitualPoleBlockEntity extends BlockEntity {
         ritualState = RitualState.SUCCESS;
 
         for (EntityType<?> entityType : ModComponents.ENTITY_TYPES_KILLED_COMPONENT.get(player).getValue()) {
+            if (!isEntityValidForRitualPoleType(entityType, getWorld().getBlockState(getPos()).get(RitualPoleBlock.TYPE))) {
+                continue;
+            }
+
             for (ItemStack itemStack : ENTITY_TYPE_LOOT_MAP.get(entityType)) {
                 ItemEntity itemEntity = new ItemEntity(
                         getWorld(),
@@ -208,6 +219,27 @@ public class RitualPoleBlockEntity extends BlockEntity {
         markDirty();
     }
 
+    public static boolean isEntityValidForRitualPoleType(EntityType<?> entityType, RitualPoleType ritualPoleType) {
+        if (ModEntityHelper.isWaterCreature(entityType) && ritualPoleType != RitualPoleType.AQUATIC) {
+            return false;
+        }
+
+        if ((entityType.isIn(ModTags.LIVES_IN_OVERWORLD_LAND) || entityType.isIn(ModTags.LIVES_IN_OVERWORLD_FLYING) &&
+                ritualPoleType != RitualPoleType.OVERWORLD)) {
+            return false;
+        }
+
+        if (entityType.isIn(ModTags.LIVES_IN_NETHER) && ritualPoleType != RitualPoleType.NETHER) {
+            return false;
+        }
+
+        if (entityType.isIn(ModTags.LIVES_IN_END) && ritualPoleType != RitualPoleType.END) {
+            return false;
+        }
+
+        return true;
+    }
+
     private static BlockPos canSpawn(Vec3d raycastStart, Vec3d raycastEnd, PlayerEntity player, EntityType<?> entityType) {
         RaycastContext raycastContext = new RaycastContext(
                 raycastStart,
@@ -225,12 +257,7 @@ public class RitualPoleBlockEntity extends BlockEntity {
 
         boolean canSpawn = true;
 
-        boolean isWaterCreature =
-                entityType.isIn(ModTags.AQUATIC) ||
-                entityType.getSpawnGroup() == SpawnGroup.WATER_AMBIENT ||
-                entityType.getSpawnGroup() == SpawnGroup.WATER_CREATURE ||
-                entityType.getSpawnGroup() == SpawnGroup.UNDERGROUND_WATER_CREATURE ||
-                entityType.getSpawnGroup() == SpawnGroup.AXOLOTLS;
+        boolean isWaterCreature = ModEntityHelper.isWaterCreature(entityType);
 
         for (int i = 0; i < height; i++) {
             int distance = i + 1;

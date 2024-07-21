@@ -1,6 +1,10 @@
 {
   "replace": false,
   "values": [
+    {
+      "id": "#c:leaves",
+      "required": false
+    },
     "minecraft:nether_wart_block",
     "minecraft:warped_wart_block",
     "minecraft:shroomlight",

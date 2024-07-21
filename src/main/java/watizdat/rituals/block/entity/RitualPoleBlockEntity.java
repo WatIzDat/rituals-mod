@@ -10,6 +10,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.particle.DustParticleEffect;
+import net.minecraft.registry.Registries;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
@@ -143,13 +144,34 @@ public class RitualPoleBlockEntity extends BlockEntity {
     }
 
     public void successRitual() {
-        if (getWorld().getPlayerByUuid(playerUuid) == null ||
-            getWorld().getPlayerByUuid(playerUuid).isDead()) {
+        PlayerEntity player = getWorld().getPlayerByUuid(playerUuid);
+
+        if (player == null ||
+            player.isDead()) {
 
             return;
         }
 
         ritualState = RitualState.SUCCESS;
+
+        for (EntityType<?> entityType : ModComponents.ENTITY_TYPES_KILLED_COMPONENT.get(player).getValue()) {
+            for (ItemStack itemStack : ENTITY_TYPE_LOOT_MAP.get(entityType)) {
+                ItemEntity itemEntity = new ItemEntity(
+                        getWorld(),
+                        getPos().getX() + 0.5,
+                        getPos().getY() + 1.5,
+                        getPos().getZ() + 0.5,
+                        itemStack.copy(),
+                        0d,
+                        0d,
+                        0d);
+
+                itemEntity.setToDefaultPickupDelay();
+                itemEntity.setCovetedItem();
+
+                getWorld().spawnEntity(itemEntity);
+            }
+        }
 
         stopRitual();
     }

@@ -24,10 +24,6 @@
                         <scroll direction="vertical">
                             <flow-layout direction="vertical" id="entity-types-killed-list-container">
                                 <children />
-
-                                <padding>
-                                    <all>1</all>
-                                </padding>
                             </flow-layout>
 
                             <sizing>
@@ -157,6 +153,12 @@
 
                 <horizontal-alignment>center</horizontal-alignment>
                 <vertical-alignment>center</vertical-alignment>
+
+                <surface>
+                    <flat>{{color}}</flat>
+                </surface>
+
+                <z-index>-2</z-index>
             </grid-layout>
         </template>
 

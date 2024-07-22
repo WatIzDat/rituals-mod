@@ -54,6 +54,9 @@ public class RitualPoleBlock extends BlockWithEntity {
         RitualState ritualState = ((RitualPoleBlockEntity) world.getBlockEntity(pos)).getRitualState();
         buf.writeEnumConstant(ritualState);
 
+        RitualPoleType ritualPoleType = world.getBlockState(pos).get(RitualPoleBlock.TYPE);
+        buf.writeEnumConstant(ritualPoleType);
+
         ServerPlayNetworking.send((ServerPlayerEntity) player, ModNetworkConstants.OPEN_RITUAL_POLE_GUI_PACKET_ID, buf);
 
         return ActionResult.SUCCESS;

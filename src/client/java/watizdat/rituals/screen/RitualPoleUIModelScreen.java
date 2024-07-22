@@ -25,11 +25,11 @@ import java.util.*;
 
 public class RitualPoleUIModelScreen extends BaseUIModelScreen<FlowLayout> {
     private RitualState ritualState;
-    private final List<Identifier> entityTypesKilled;
+    private final List<Map.Entry<Identifier, Integer>> entityTypesKilled;
     private final BlockPos pos;
     private final RitualPoleType ritualPoleType;
 
-    public RitualPoleUIModelScreen(RitualState ritualState, List<Identifier> entityTypesKilled, BlockPos pos, RitualPoleType ritualPoleType) {
+    public RitualPoleUIModelScreen(RitualState ritualState, List<Map.Entry<Identifier, Integer>> entityTypesKilled, BlockPos pos, RitualPoleType ritualPoleType) {
         super(FlowLayout.class, DataSource.asset(Rituals.id("ritual_pole_ui_model")));
 
         this.ritualState = ritualState;
@@ -59,9 +59,9 @@ public class RitualPoleUIModelScreen extends BaseUIModelScreen<FlowLayout> {
     }
 
     private void initLists(FlowLayout rootComponent) {
-        entityTypesKilled.sort((id1, id2) -> {
-            EntityType<?> entityType1 = Registries.ENTITY_TYPE.get(id1);
-            EntityType<?> entityType2 = Registries.ENTITY_TYPE.get(id2);
+        entityTypesKilled.sort((entry1, entry2) -> {
+            EntityType<?> entityType1 = Registries.ENTITY_TYPE.get(entry1.getKey());
+            EntityType<?> entityType2 = Registries.ENTITY_TYPE.get(entry2.getKey());
 
             return Collator.getInstance(new Locale(MinecraftClient.getInstance().options.language))
                     .compare(entityType1.getName().getString(), entityType2.getName().getString());
@@ -73,7 +73,10 @@ public class RitualPoleUIModelScreen extends BaseUIModelScreen<FlowLayout> {
         FlowLayout entityTypesKilledListContainer =
                 rootComponent.childById(FlowLayout.class, "entity-types-killed-list-container");
 
-        for (Identifier entityTypeId : entityTypesKilled) {
+        for (Map.Entry<Identifier, Integer> entry : entityTypesKilled) {
+            Identifier entityTypeId = entry.getKey();
+            int count = entry.getValue();
+
             boolean isEntityValidForRitualPoleType =
                     RitualPoleBlockEntity.isEntityValidForRitualPoleType(Registries.ENTITY_TYPE.get(entityTypeId), ritualPoleType);
 
@@ -82,7 +85,7 @@ public class RitualPoleUIModelScreen extends BaseUIModelScreen<FlowLayout> {
                     "entity-types-killed-list-entry",
                     Map.of(
                             "entityType", entityTypeId.toString(),
-                            "entityTypeName", Registries.ENTITY_TYPE.get(entityTypeId).getName().getString(),
+                            "entityTypeName", Registries.ENTITY_TYPE.get(entityTypeId).getName().getString() + " x" + count,
                             "color", isEntityValidForRitualPoleType ? "#00000000" : "#80FF2D00"));
 
             FlowLayout entityTypeLoot = entityTypesKilledListEntry.childById(FlowLayout.class, "entity-type-loot");

@@ -4,16 +4,22 @@ import net.minecraft.entity.EntityType;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.registry.Registries;
 import net.minecraft.util.Identifier;
-import watizdat.rituals.state.component.abstraction.ArrayListComponent;
+import watizdat.rituals.state.component.abstraction.HashMapComponent;
 
-public class EntityTypesKilledComponent extends ArrayListComponent<EntityType<?>> {
+import java.util.Map;
+
+public class EntityTypesKilledComponent extends HashMapComponent<EntityType<?>, Integer> {
     @Override
-    public EntityType<?> readSingleElementFromNbt(NbtCompound tag, String keyOfElement) {
-        return Registries.ENTITY_TYPE.get(new Identifier(tag.getString(keyOfElement)));
+    public Map.Entry<EntityType<?>, Integer> readSingleEntryFromNbt(NbtCompound tag, String keyOfEntry) {
+        return Map.entry(Registries.ENTITY_TYPE.get(new Identifier(keyOfEntry)), tag.getInt(keyOfEntry));
     }
 
     @Override
-    public void writeSingleElementToNbt(NbtCompound tag, EntityType<?> e, int indexOfElement) {
-        tag.putString(String.valueOf(indexOfElement), EntityType.getId(e).toString());
+    public void writeSingleEntryToNbt(NbtCompound tag, Map.Entry<EntityType<?>, Integer> entry) {
+        tag.putInt(EntityType.getId(entry.getKey()).toString(), entry.getValue());
+    }
+
+    public void addEntityType(EntityType<?> entityType) {
+        put(entityType, getMap().containsKey(entityType) ? getMap().get(entityType) + 1 : 1);
     }
 }

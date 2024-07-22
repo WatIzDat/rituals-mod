@@ -31,7 +31,14 @@ public class ModServerReceivers {
                 EntityTypesKilledComponent entityTypesKilled = ModComponents.ENTITY_TYPES_KILLED_COMPONENT.get(player);
 
                 PacketByteBuf openGuiBuf = PacketByteBufs.create();
-                openGuiBuf.writeCollection(entityTypesKilled.getValue().stream().map(EntityType::getId).toList(), PacketByteBuf::writeIdentifier);
+
+                buf.writeCollection(
+                        entityTypesKilled.getMap().entrySet().stream().toList(),
+                        (packetByteBuf, entry) -> {
+                            packetByteBuf.writeIdentifier(EntityType.getId(entry.getKey()));
+                            packetByteBuf.writeInt(entry.getValue());
+                        });
+
                 openGuiBuf.writeBlockPos(pos);
 
                 RitualState ritualState = be.getRitualState();

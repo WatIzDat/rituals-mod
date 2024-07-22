@@ -57,11 +57,17 @@ public abstract class LivingEntityMixin extends Entity {
 			} else if (getAttacker() != null && getAttacker().isPlayer()) {
                 EntityTypesKilledComponent entityTypesKilled = ModComponents.ENTITY_TYPES_KILLED_COMPONENT.get(getAttacker());
 
-				entityTypesKilled.add(getType());
+				entityTypesKilled.addEntityType(getType());
 
 				MinecraftServer server = getWorld().getServer();
 				PacketByteBuf buf = PacketByteBufs.create();
-				buf.writeCollection(entityTypesKilled.getValue().stream().map(EntityType::getId).toList(), PacketByteBuf::writeIdentifier);
+
+				buf.writeCollection(
+						entityTypesKilled.getMap().entrySet().stream().toList(),
+						(packetByteBuf, entry) -> {
+                            packetByteBuf.writeIdentifier(EntityType.getId(entry.getKey()));
+							packetByteBuf.writeInt(entry.getValue());
+                        });
 
 				ServerPlayerEntity playerEntity = server.getPlayerManager().getPlayer(getAttacker().getUuid());
 				server.execute(() -> {

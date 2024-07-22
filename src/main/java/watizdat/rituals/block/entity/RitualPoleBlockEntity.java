@@ -33,7 +33,7 @@ import java.util.*;
 public class RitualPoleBlockEntity extends BlockEntity {
     public static final HashMap<EntityType<?>, List<ItemStack>> ENTITY_TYPE_LOOT_MAP = new HashMap<>(Map.ofEntries(
             Map.entry(EntityType.ALLAY, List.of(new ItemStack(Items.DIAMOND, 16))),
-            Map.entry(EntityType.AXOLOTL, List.of(new ItemStack(Items.GLOW_BERRIES, 64))),
+            Map.entry(EntityType.AXOLOTL, List.of(new ItemStack(Items.GLOW_BERRIES, 64), new ItemStack(Items.MOSS_BLOCK, 7))),
             Map.entry(EntityType.BAT, List.of()),
             Map.entry(EntityType.PIGLIN, List.of(new ItemStack(Items.GOLD_INGOT, 32))),
             Map.entry(EntityType.SHULKER, List.of(new ItemStack(Items.SHULKER_SHELL, 32)))
@@ -89,7 +89,10 @@ public class RitualPoleBlockEntity extends BlockEntity {
 
         EntityTypesKilledComponent entityTypesKilled = ModComponents.ENTITY_TYPES_KILLED_COMPONENT.get(player);
 
-        for (EntityType<?> entityType : entityTypesKilled.getValue()) {
+        for (Map.Entry<EntityType<?>, Integer> entry : entityTypesKilled.getMap().entrySet()) {
+            EntityType<?> entityType = entry.getKey();
+            int count = entry.getValue();
+
             if (!isEntityValidForRitualPoleType(entityType, getWorld().getBlockState(getPos()).get(RitualPoleBlock.TYPE))) {
                 continue;
             }
@@ -140,13 +143,15 @@ public class RitualPoleBlockEntity extends BlockEntity {
 
             Random random = new Random();
 
-            BlockPos pos = validSpawnPositions.get(random.nextInt(validSpawnPositions.size()));
+            for (int i = 0; i < count; i++) {
+                BlockPos pos = validSpawnPositions.get(random.nextInt(validSpawnPositions.size()));
 
-            ServerWorld serverWorld = player.getServer().getWorld(player.getWorld().getRegistryKey());
+                ServerWorld serverWorld = player.getServer().getWorld(player.getWorld().getRegistryKey());
 
-            Entity entity = entityType.spawn(serverWorld, pos, SpawnReason.MOB_SUMMONED);
+                Entity entity = entityType.spawn(serverWorld, pos, SpawnReason.MOB_SUMMONED);
 
-            ModEntityHelper.setAsRitualMob(entity, getPos());
+                ModEntityHelper.setAsRitualMob(entity, getPos());
+            }
         }
     }
 
@@ -161,26 +166,31 @@ public class RitualPoleBlockEntity extends BlockEntity {
 
         ritualState = RitualState.SUCCESS;
 
-        for (EntityType<?> entityType : ModComponents.ENTITY_TYPES_KILLED_COMPONENT.get(player).getValue()) {
+        for (Map.Entry<EntityType<?>, Integer> entry : ModComponents.ENTITY_TYPES_KILLED_COMPONENT.get(player).getMap().entrySet()) {
+            EntityType<?> entityType = entry.getKey();
+            int count = entry.getValue();
+
             if (!isEntityValidForRitualPoleType(entityType, getWorld().getBlockState(getPos()).get(RitualPoleBlock.TYPE))) {
                 continue;
             }
 
-            for (ItemStack itemStack : ENTITY_TYPE_LOOT_MAP.get(entityType)) {
-                ItemEntity itemEntity = new ItemEntity(
-                        getWorld(),
-                        getPos().getX() + 0.5,
-                        getPos().getY() + 1.5,
-                        getPos().getZ() + 0.5,
-                        itemStack.copy(),
-                        0d,
-                        0d,
-                        0d);
+            for (int i = 0; i < count; i++) {
+                for (ItemStack itemStack : ENTITY_TYPE_LOOT_MAP.get(entityType)) {
+                    ItemEntity itemEntity = new ItemEntity(
+                            getWorld(),
+                            getPos().getX() + 0.5,
+                            getPos().getY() + 1.5,
+                            getPos().getZ() + 0.5,
+                            itemStack.copy(),
+                            0d,
+                            0d,
+                            0d);
 
-                itemEntity.setToDefaultPickupDelay();
-                itemEntity.setCovetedItem();
+                    itemEntity.setToDefaultPickupDelay();
+                    itemEntity.setCovetedItem();
 
-                getWorld().spawnEntity(itemEntity);
+                    getWorld().spawnEntity(itemEntity);
+                }
             }
         }
 

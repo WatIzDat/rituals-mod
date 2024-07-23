@@ -1,6 +1,15 @@
 {
   "variants": {
-    "half=lower": { "model": "rituals:block/ritual_pole_bottom" },
-    "half=upper": { "model": "rituals:block/ritual_pole_top" }
+    "half=lower,type=overworld": { "model": "rituals:block/ritual_pole_bottom_overworld" },
+    "half=upper,type=overworld": { "model": "rituals:block/ritual_pole_top_overworld" },
+
+    "half=lower,type=aquatic": { "model": "rituals:block/ritual_pole_bottom_overworld" },
+    "half=upper,type=aquatic": { "model": "rituals:block/ritual_pole_top" },
+
+    "half=lower,type=nether": { "model": "rituals:block/ritual_pole_bottom_overworld" },
+    "half=upper,type=nether": { "model": "rituals:block/ritual_pole_top" },
+
+    "half=lower,type=end": { "model": "rituals:block/ritual_pole_bottom_overworld" },
+    "half=upper,type=end": { "model": "rituals:block/ritual_pole_top" }
   }
 }

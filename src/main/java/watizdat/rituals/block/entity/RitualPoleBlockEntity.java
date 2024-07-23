@@ -73,23 +73,9 @@ public class RitualPoleBlockEntity extends BlockEntity {
     }
 
     public void startRitual(PlayerEntity player, List<Map.Entry<Identifier, Integer>> entityTypesKilled) {
-        Rituals.LOGGER.info("Ritual started");
-
-        playerUuid = player.getUuid();
-        ModComponents.RITUAL_POLE_POS_COMPONENT.get(player).set(getPos());
-
-        ritualState = RitualState.IN_PROGRESS;
-
         this.entityTypesKilled = entityTypesKilled.stream().<Map.Entry<EntityType<?>, Integer>>map(entry -> Map.entry(Registries.ENTITY_TYPE.get(entry.getKey()), entry.getValue())).toList();
 
-        timerStarted = true;
-        timerTicks = TIMER_MAX_TICKS;
-
-        markDirty();
-
-        if (particlePositions.isEmpty()) {
-            setParticlePositions();
-        }
+        boolean singleEntitySpawned = false;
 
         for (Map.Entry<EntityType<?>, Integer> entry : this.entityTypesKilled) {
             EntityType<?> entityType = entry.getKey();
@@ -97,6 +83,12 @@ public class RitualPoleBlockEntity extends BlockEntity {
 
             if (!isEntityValidForRitualPoleType(entityType, getWorld().getBlockState(getPos()).get(RitualPoleBlock.TYPE))) {
                 continue;
+            }
+
+            if (count < 0) {
+                throw new UnsupportedOperationException("Count was negative");
+            } else if (count > 0) {
+                singleEntitySpawned = true;
             }
 
             List<BlockPos> validSpawnPositions = new ArrayList<>();
@@ -153,6 +145,24 @@ public class RitualPoleBlockEntity extends BlockEntity {
                 Entity entity = entityType.spawn(serverWorld, pos, SpawnReason.MOB_SUMMONED);
 
                 ModEntityHelper.setAsRitualMob(entity, getPos());
+            }
+        }
+
+        if (singleEntitySpawned) {
+            Rituals.LOGGER.info("Ritual started");
+
+            playerUuid = player.getUuid();
+            ModComponents.RITUAL_POLE_POS_COMPONENT.get(player).set(getPos());
+
+            ritualState = RitualState.IN_PROGRESS;
+
+            timerStarted = true;
+            timerTicks = TIMER_MAX_TICKS;
+
+            markDirty();
+
+            if (particlePositions.isEmpty()) {
+                setParticlePositions();
             }
         }
     }

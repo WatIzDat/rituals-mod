@@ -69,7 +69,7 @@ public class RitualPoleUIModelScreen extends BaseUIModelScreen<FlowLayout> {
                     });
 
             ClientPlayNetworking.send(ModNetworkConstants.START_RITUAL_PACKET_ID, buf);
-        });
+        }).active(false);
     }
 
     private void initLists(FlowLayout rootComponent) {
@@ -123,7 +123,9 @@ public class RitualPoleUIModelScreen extends BaseUIModelScreen<FlowLayout> {
                 button.parent().parent()
                         .childById(LabelComponent.class, "usedCountLabel")
                         .text(Text.literal("Used: " + usedCounts.get(entityTypeId)));
-            });
+
+                rootComponent.childById(ButtonComponent.class, "start-ritual-button").active(true);
+            }).active(isEntityValidForRitualPoleType);
 
             entityTypesKilledListEntry.childById(ButtonComponent.class, "remove-entity-button").onPress(button -> {
                 if (usedCounts.get(entityTypeId) == 0) {
@@ -140,7 +142,11 @@ public class RitualPoleUIModelScreen extends BaseUIModelScreen<FlowLayout> {
                 button.parent().parent()
                         .childById(LabelComponent.class, "usedCountLabel")
                         .text(Text.literal("Used: " + usedCounts.get(entityTypeId)));
-            });
+
+                if (usedCounts.values().stream().allMatch(count -> count == 0)) {
+                    rootComponent.childById(ButtonComponent.class, "start-ritual-button").active(false);
+                }
+            }).active(isEntityValidForRitualPoleType);
 
             FlowLayout entityTypeLoot = entityTypesKilledListEntry.childById(FlowLayout.class, "entity-type-loot");
 

@@ -19,6 +19,15 @@ public class EntityTypesKilledComponent extends HashMapComponent<EntityType<?>, 
         tag.putInt(EntityType.getId(entry.getKey()).toString(), entry.getValue());
     }
 
+    @Override
+    public void put(EntityType<?> key, Integer value) {
+        if (value <= 0) {
+            remove(key);
+        } else {
+            super.put(key, value);
+        }
+    }
+
     public void addEntityType(EntityType<?> entityType) {
         put(entityType, getMap().containsKey(entityType) ? getMap().get(entityType) + 1 : 1);
     }

@@ -28,6 +28,7 @@ import watizdat.rituals.enums.RitualState;
 import watizdat.rituals.init.ModBlockEntityTypes;
 import watizdat.rituals.init.ModTags;
 import watizdat.rituals.state.ModComponents;
+import watizdat.rituals.state.component.EntityTypesKilledComponent;
 
 import java.util.*;
 
@@ -89,6 +90,10 @@ public class RitualPoleBlockEntity extends BlockEntity {
                 throw new UnsupportedOperationException("Count was negative");
             } else if (count > 0) {
                 singleEntitySpawned = true;
+
+                EntityTypesKilledComponent entityTypesKilledComponent = ModComponents.ENTITY_TYPES_KILLED_COMPONENT.get(player);
+
+                entityTypesKilledComponent.put(entityType, entityTypesKilledComponent.getMap().get(entityType) - count);
             }
 
             List<BlockPos> validSpawnPositions = new ArrayList<>();

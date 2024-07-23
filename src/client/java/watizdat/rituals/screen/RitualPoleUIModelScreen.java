@@ -2,8 +2,8 @@ package watizdat.rituals.screen;
 
 import io.wispforest.owo.ui.base.BaseUIModelScreen;
 import io.wispforest.owo.ui.component.ButtonComponent;
+import io.wispforest.owo.ui.component.LabelComponent;
 import io.wispforest.owo.ui.container.FlowLayout;
-import io.wispforest.owo.ui.container.GridLayout;
 import io.wispforest.owo.ui.core.Component;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
@@ -12,6 +12,7 @@ import net.minecraft.entity.EntityType;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.registry.Registries;
+import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import watizdat.rituals.Rituals;
@@ -22,10 +23,13 @@ import watizdat.rituals.network.ModNetworkConstants;
 
 import java.text.Collator;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class RitualPoleUIModelScreen extends BaseUIModelScreen<FlowLayout> {
     private RitualState ritualState;
     private final List<Map.Entry<Identifier, Integer>> entityTypesKilled;
+    private final HashMap<Identifier, Integer> availableCounts;
+    private final HashMap<Identifier, Integer> usedCounts;
     private final BlockPos pos;
     private final RitualPoleType ritualPoleType;
 
@@ -36,6 +40,9 @@ public class RitualPoleUIModelScreen extends BaseUIModelScreen<FlowLayout> {
         this.entityTypesKilled = entityTypesKilled;
         this.pos = pos;
         this.ritualPoleType = ritualPoleType;
+
+        this.availableCounts = new HashMap<>(entityTypesKilled.stream().collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue)));
+        this.usedCounts = new HashMap<>(entityTypesKilled.stream().collect(Collectors.toMap(Map.Entry::getKey, entry -> 0)));
     }
 
     @Override
@@ -59,6 +66,11 @@ public class RitualPoleUIModelScreen extends BaseUIModelScreen<FlowLayout> {
     }
 
     private void initLists(FlowLayout rootComponent) {
+        FlowLayout entityTypesKilledListContainer =
+                rootComponent.childById(FlowLayout.class, "entity-types-killed-list-container");
+
+        entityTypesKilledListContainer.clearChildren();
+
         entityTypesKilled.sort((entry1, entry2) -> {
             EntityType<?> entityType1 = Registries.ENTITY_TYPE.get(entry1.getKey());
             EntityType<?> entityType2 = Registries.ENTITY_TYPE.get(entry2.getKey());
@@ -70,23 +82,58 @@ public class RitualPoleUIModelScreen extends BaseUIModelScreen<FlowLayout> {
         List<Component> validEntries = new ArrayList<>();
         List<Component> invalidEntries = new ArrayList<>();
 
-        FlowLayout entityTypesKilledListContainer =
-                rootComponent.childById(FlowLayout.class, "entity-types-killed-list-container");
-
-        for (Map.Entry<Identifier, Integer> entry : entityTypesKilled) {
+        for (int i = 0; i < entityTypesKilled.size(); i++) {
+            Map.Entry<Identifier, Integer> entry = entityTypesKilled.get(i);
             Identifier entityTypeId = entry.getKey();
-            int count = entry.getValue();
+            int availableCount = availableCounts.get(entityTypeId);
+            int usedCount = usedCounts.get(entityTypeId);
 
             boolean isEntityValidForRitualPoleType =
                     RitualPoleBlockEntity.isEntityValidForRitualPoleType(Registries.ENTITY_TYPE.get(entityTypeId), ritualPoleType);
 
-            GridLayout entityTypesKilledListEntry = model.expandTemplate(
-                    GridLayout.class,
+            FlowLayout entityTypesKilledListEntry = model.expandTemplate(
+                    FlowLayout.class,
                     "entity-types-killed-list-entry",
                     Map.of(
                             "entityType", entityTypeId.toString(),
-                            "entityTypeName", Registries.ENTITY_TYPE.get(entityTypeId).getName().getString() + " x" + count,
+                            "entityTypeName", Registries.ENTITY_TYPE.get(entityTypeId).getName().getString(),
+                            "availableCount", String.valueOf(availableCount),
+                            "usedCount", String.valueOf(usedCount),
                             "color", isEntityValidForRitualPoleType ? "#00000000" : "#80FF2D00"));
+
+            entityTypesKilledListEntry.childById(ButtonComponent.class, "add-entity-button").onPress(button -> {
+                if (availableCounts.get(entityTypeId) == 0) {
+                    return;
+                }
+
+                availableCounts.put(entityTypeId, availableCounts.get(entityTypeId) - 1);
+                usedCounts.put(entityTypeId, usedCounts.get(entityTypeId) + 1);
+
+                button.parent().parent()
+                        .childById(LabelComponent.class, "availableCountLabel")
+                        .text(Text.literal("Available: " + availableCounts.get(entityTypeId)));
+
+                button.parent().parent()
+                        .childById(LabelComponent.class, "usedCountLabel")
+                        .text(Text.literal("Used: " + usedCounts.get(entityTypeId)));
+            });
+
+            entityTypesKilledListEntry.childById(ButtonComponent.class, "remove-entity-button").onPress(button -> {
+                if (usedCounts.get(entityTypeId) == 0) {
+                    return;
+                }
+
+                availableCounts.put(entityTypeId, availableCounts.get(entityTypeId) + 1);
+                usedCounts.put(entityTypeId, usedCounts.get(entityTypeId) - 1);
+
+                button.parent().parent()
+                        .childById(LabelComponent.class, "availableCountLabel")
+                        .text(Text.literal("Available: " + availableCounts.get(entityTypeId)));
+
+                button.parent().parent()
+                        .childById(LabelComponent.class, "usedCountLabel")
+                        .text(Text.literal("Used: " + usedCounts.get(entityTypeId)));
+            });
 
             FlowLayout entityTypeLoot = entityTypesKilledListEntry.childById(FlowLayout.class, "entity-type-loot");
 

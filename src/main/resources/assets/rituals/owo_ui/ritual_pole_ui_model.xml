@@ -104,26 +104,76 @@
     </components>
     
     <templates>
-<!--        <entity-types-killed-list-entry>-->
-<!--            -->
-<!--        </entity-types-killed-list-entry>-->
-
         <template name="entity-types-killed-list-entry">
-            <grid-layout rows="1" columns="3">
+            <flow-layout direction="horizontal">
                 <children>
-                    <entity type="{{entityType}}" row="0" column="0">
-                        <sizing>
-                            <horizontal method="fixed">30</horizontal>
-                            <vertical method="fixed">30</vertical>
-                        </sizing>
-                        <scale>0.75</scale>
-                    </entity>
+                    <flow-layout direction="horizontal">
+                        <children>
+                            <entity type="{{entityType}}">
+                                <sizing>
+                                    <horizontal method="fixed">30</horizontal>
+                                    <vertical method="fixed">30</vertical>
+                                </sizing>
+                                <scale>0.75</scale>
 
-                    <label row="0" column="1">
+                                <margins>
+                                    <left>5</left>
+                                    <right>10</right>
+                                </margins>
+                            </entity>
+
+                            <flow-layout direction="vertical">
+                                <children>
+                                    <label id="availableCountLabel">
+                                        <text translate="false">Available: {{availableCount}}</text>
+                                    </label>
+
+                                    <label id="usedCountLabel">
+                                        <text translate="false">Used: {{usedCount}}</text>
+                                    </label>
+
+                                    <flow-layout direction="horizontal">
+                                        <children>
+                                            <button id="add-entity-button">
+                                                <text translate="false">+</text>
+
+                                                <sizing>
+                                                    <horizontal method="fixed">16</horizontal>
+                                                    <vertical method="fixed">16</vertical>
+                                                </sizing>
+                                            </button>
+                                            <button id="remove-entity-button">
+                                                <text translate="false">-</text>
+
+                                                <sizing>
+                                                    <horizontal method="fixed">16</horizontal>
+                                                    <vertical method="fixed">16</vertical>
+                                                </sizing>
+                                            </button>
+                                        </children>
+                                    </flow-layout>
+                                </children>
+
+                                <sizing>
+                                    <vertical method="fill">100</vertical>
+                                </sizing>
+
+                                <vertical-alignment>center</vertical-alignment>
+                            </flow-layout>
+                        </children>
+
+                        <vertical-alignment>center</vertical-alignment>
+                    </flow-layout>
+
+                    <label>
                         <text translate="true">{{entityTypeName}}</text>
+
+                        <margins>
+                            <left>30</left>
+                        </margins>
                     </label>
 
-                    <flow-layout direction="horizontal" id="entity-type-loot" row="0" column="2">
+                    <flow-layout direction="horizontal" id="entity-type-loot">
                         <children />
 
                         <horizontal-alignment>right</horizontal-alignment>
@@ -144,14 +194,14 @@
 
                 <sizing>
                     <horizontal method="fill">100</horizontal>
-                    <vertical method="fixed">40</vertical>
+                    <vertical method="fixed">50</vertical>
                 </sizing>
 
                 <padding>
                     <vertical>5</vertical>
                 </padding>
 
-                <horizontal-alignment>center</horizontal-alignment>
+                <horizontal-alignment>left</horizontal-alignment>
                 <vertical-alignment>center</vertical-alignment>
 
                 <surface>
@@ -159,7 +209,7 @@
                 </surface>
 
                 <z-index>-2</z-index>
-            </grid-layout>
+            </flow-layout>
         </template>
 
         <template name="entity-type-loot-item">
@@ -168,7 +218,6 @@
                     <item>
                         <stack>{{item}}</stack>
                         <show-overlay>true</show-overlay>
-<!--                        <positioning type="relative">50,100</positioning>-->
                     </item>
 
                     <label>

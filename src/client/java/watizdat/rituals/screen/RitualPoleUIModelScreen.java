@@ -59,7 +59,14 @@ public class RitualPoleUIModelScreen extends BaseUIModelScreen<FlowLayout> {
             client.setScreen(null);
 
             PacketByteBuf buf = PacketByteBufs.create();
+
             buf.writeBlockPos(pos);
+            buf.writeCollection(
+                    entityTypesKilled.stream().map(entry -> Map.entry(entry.getKey(), usedCounts.get(entry.getKey()))).toList(),
+                    (packetByteBuf, entry) -> {
+                        packetByteBuf.writeIdentifier(entry.getKey());
+                        packetByteBuf.writeInt(entry.getValue());
+                    });
 
             ClientPlayNetworking.send(ModNetworkConstants.START_RITUAL_PACKET_ID, buf);
         });

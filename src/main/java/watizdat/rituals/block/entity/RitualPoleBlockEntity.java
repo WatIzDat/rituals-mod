@@ -10,7 +10,9 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.particle.DustParticleEffect;
+import net.minecraft.registry.Registries;
 import net.minecraft.server.world.ServerWorld;
+import net.minecraft.util.Identifier;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
@@ -26,7 +28,6 @@ import watizdat.rituals.enums.RitualState;
 import watizdat.rituals.init.ModBlockEntityTypes;
 import watizdat.rituals.init.ModTags;
 import watizdat.rituals.state.ModComponents;
-import watizdat.rituals.state.component.EntityTypesKilledComponent;
 
 import java.util.*;
 
@@ -41,6 +42,7 @@ public class RitualPoleBlockEntity extends BlockEntity {
 
     private RitualState ritualState = RitualState.NOT_STARTED;
     private List<UUID> entityUuids = new ArrayList<>();
+    private List<Map.Entry<EntityType<?>, Integer>> entityTypesKilled;
     private UUID playerUuid = new UUID(0L, 0L);
     private List<Vector3d> particlePositions = new ArrayList<>();
 
@@ -70,13 +72,15 @@ public class RitualPoleBlockEntity extends BlockEntity {
         }
     }
 
-    public void startRitual(PlayerEntity player) {
+    public void startRitual(PlayerEntity player, List<Map.Entry<Identifier, Integer>> entityTypesKilled) {
         Rituals.LOGGER.info("Ritual started");
 
         playerUuid = player.getUuid();
         ModComponents.RITUAL_POLE_POS_COMPONENT.get(player).set(getPos());
 
         ritualState = RitualState.IN_PROGRESS;
+
+        this.entityTypesKilled = entityTypesKilled.stream().<Map.Entry<EntityType<?>, Integer>>map(entry -> Map.entry(Registries.ENTITY_TYPE.get(entry.getKey()), entry.getValue())).toList();
 
         timerStarted = true;
         timerTicks = TIMER_MAX_TICKS;
@@ -87,9 +91,7 @@ public class RitualPoleBlockEntity extends BlockEntity {
             setParticlePositions();
         }
 
-        EntityTypesKilledComponent entityTypesKilled = ModComponents.ENTITY_TYPES_KILLED_COMPONENT.get(player);
-
-        for (Map.Entry<EntityType<?>, Integer> entry : entityTypesKilled.getMap().entrySet()) {
+        for (Map.Entry<EntityType<?>, Integer> entry : this.entityTypesKilled) {
             EntityType<?> entityType = entry.getKey();
             int count = entry.getValue();
 
@@ -166,7 +168,7 @@ public class RitualPoleBlockEntity extends BlockEntity {
 
         ritualState = RitualState.SUCCESS;
 
-        for (Map.Entry<EntityType<?>, Integer> entry : ModComponents.ENTITY_TYPES_KILLED_COMPONENT.get(player).getMap().entrySet()) {
+        for (Map.Entry<EntityType<?>, Integer> entry : entityTypesKilled) {
             EntityType<?> entityType = entry.getKey();
             int count = entry.getValue();
 

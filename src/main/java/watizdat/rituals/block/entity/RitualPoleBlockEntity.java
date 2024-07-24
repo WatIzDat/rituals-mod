@@ -43,7 +43,7 @@ public class RitualPoleBlockEntity extends BlockEntity {
 
     private RitualState ritualState = RitualState.NOT_STARTED;
     private List<UUID> entityUuids = new ArrayList<>();
-    private List<Map.Entry<EntityType<?>, Integer>> entityTypesKilled;
+    private List<Map.Entry<EntityType<?>, Integer>> entityTypesKilled = new ArrayList<>();
     private UUID playerUuid = new UUID(0L, 0L);
     private List<Vector3d> particlePositions = new ArrayList<>();
 
@@ -356,6 +356,12 @@ public class RitualPoleBlockEntity extends BlockEntity {
             entityUuids.add(entityUuidsNbt.getUuid(key));
         });
 
+        NbtCompound entityTypesKilledNbt = nbt.getCompound("entityTypesKilled");
+
+        entityTypesKilledNbt.getKeys().forEach(key -> {
+            entityTypesKilled.add(Map.entry(Registries.ENTITY_TYPE.get(Identifier.tryParse(key)), entityTypesKilledNbt.getInt(key)));
+        });
+
         ritualState = Enum.valueOf(RitualState.class, nbt.getString("ritualState"));
 
         playerUuid = nbt.getUuid("playerUuid");
@@ -372,6 +378,14 @@ public class RitualPoleBlockEntity extends BlockEntity {
         }
 
         nbt.put("entityUuids", entityUuidsNbt);
+
+        NbtCompound entityTypesKilledNbt = new NbtCompound();
+
+        for (Map.Entry<EntityType<?>, Integer> entry : entityTypesKilled) {
+            entityTypesKilledNbt.putInt(EntityType.getId(entry.getKey()).toString(), entry.getValue());
+        }
+
+        nbt.put("entityTypesKilled", entityTypesKilledNbt);
 
         nbt.putString("ritualState", ritualState.toString());
 

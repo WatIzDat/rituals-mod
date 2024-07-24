@@ -15,8 +15,12 @@ import net.minecraft.state.StateManager;
 import net.minecraft.state.property.EnumProperty;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
+import net.minecraft.util.function.BooleanBiFunction;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.shape.VoxelShape;
+import net.minecraft.util.shape.VoxelShapes;
+import net.minecraft.world.BlockView;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 import watizdat.rituals.block.entity.RitualPoleBlockEntity;
@@ -72,6 +76,21 @@ public class RitualPoleBlock extends BlockWithEntity {
     @Override
     protected void appendProperties(StateManager.Builder<Block, BlockState> builder) {
         builder.add(HALF).add(TYPE);
+    }
+
+    @Override
+    public VoxelShape getOutlineShape(BlockState state, BlockView world, BlockPos pos, ShapeContext context) {
+        VoxelShape platform;
+
+        if (state.get(HALF) == DoubleBlockHalf.LOWER) {
+            platform = VoxelShapes.cuboid(0f, 0f, 0f, 1f, 0.125f, 1f);
+        } else {
+            platform = VoxelShapes.cuboid(0f, 0.875f, 0f, 1f, 1f, 1f);
+        }
+
+        VoxelShape pole = VoxelShapes.cuboid(0.125f, 0f, 0.125f, 0.875f, 1f, 0.875f);
+
+        return VoxelShapes.combineAndSimplify(platform, pole, BooleanBiFunction.OR);
     }
 
     @Nullable

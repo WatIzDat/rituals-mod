@@ -3,13 +3,13 @@
     "half=lower,type=overworld": { "model": "rituals:block/ritual_pole_bottom_overworld" },
     "half=upper,type=overworld": { "model": "rituals:block/ritual_pole_top_overworld" },
 
-    "half=lower,type=aquatic": { "model": "rituals:block/ritual_pole_bottom_overworld" },
-    "half=upper,type=aquatic": { "model": "rituals:block/ritual_pole_top" },
+    "half=lower,type=aquatic": { "model": "rituals:block/ritual_pole_bottom_aquatic" },
+    "half=upper,type=aquatic": { "model": "rituals:block/ritual_pole_top_aquatic" },
 
-    "half=lower,type=nether": { "model": "rituals:block/ritual_pole_bottom_overworld" },
-    "half=upper,type=nether": { "model": "rituals:block/ritual_pole_top" },
+    "half=lower,type=nether": { "model": "rituals:block/ritual_pole_bottom_nether" },
+    "half=upper,type=nether": { "model": "rituals:block/ritual_pole_top_nether" },
 
-    "half=lower,type=end": { "model": "rituals:block/ritual_pole_bottom_overworld" },
-    "half=upper,type=end": { "model": "rituals:block/ritual_pole_top" }
+    "half=lower,type=end": { "model": "rituals:block/ritual_pole_bottom_end" },
+    "half=upper,type=end": { "model": "rituals:block/ritual_pole_top_end" }
   }
 }

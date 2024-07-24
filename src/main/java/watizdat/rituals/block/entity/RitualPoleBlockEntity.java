@@ -4,6 +4,7 @@ import com.mojang.datafixers.util.Pair;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.entity.BlockEntity;
+import net.minecraft.block.enums.DoubleBlockHalf;
 import net.minecraft.entity.*;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
@@ -196,7 +197,9 @@ public class RitualPoleBlockEntity extends BlockEntity {
                     ItemEntity itemEntity = new ItemEntity(
                             getWorld(),
                             getPos().getX() + 0.5,
-                            getPos().getY() + 1.5,
+                            getPos().getY() + 1.5
+                                    + (getWorld().getBlockState(getPos()).get(RitualPoleBlock.HALF) == DoubleBlockHalf.LOWER
+                                    ? 1 : 0),
                             getPos().getZ() + 0.5,
                             itemStack.copy(),
                             0d,

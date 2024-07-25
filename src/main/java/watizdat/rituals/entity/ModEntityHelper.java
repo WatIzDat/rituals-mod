@@ -19,8 +19,16 @@ public class ModEntityHelper {
 
         ((MobEntityMixinAccess) entity).rituals$setAsRitualMob();
 
+        int amplifier = 3;
+
+        if (entity.getType() == EntityType.ALLAY) {
+            amplifier = 2;
+        } else if (entity.getType() == EntityType.AXOLOTL) {
+            amplifier = 1;
+        }
+
         StatusEffectInstance ritualStatusEffect = new StatusEffectInstance(
-                ModStatusEffects.RITUAL_STATUS_EFFECT, StatusEffectInstance.INFINITE, 0, false, true);
+                ModStatusEffects.RITUAL_STATUS_EFFECT, StatusEffectInstance.INFINITE, amplifier, false, true);
         ((LivingEntity) entity).addStatusEffect(ritualStatusEffect);
 
         StatusEffectInstance glowingStatusEffect = new StatusEffectInstance(

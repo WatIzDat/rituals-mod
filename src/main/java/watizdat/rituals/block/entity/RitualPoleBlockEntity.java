@@ -33,11 +33,24 @@ import watizdat.rituals.state.component.EntityTypesKilledComponent;
 
 import java.util.*;
 
+// TODO: Add navigation to squid
+// TODO: Fix player somehow getting hit after an entity already died
+// TODO: Add limit to amount of mobs in ritual
 public class RitualPoleBlockEntity extends BlockEntity {
     public static final HashMap<EntityType<?>, List<ItemStack>> ENTITY_TYPE_LOOT_MAP = new HashMap<>(Map.ofEntries(
-            Map.entry(EntityType.ALLAY, List.of(new ItemStack(Items.DIAMOND, 16))),
-            Map.entry(EntityType.AXOLOTL, List.of(new ItemStack(Items.GLOW_BERRIES, 64), new ItemStack(Items.MOSS_BLOCK, 7))),
+            Map.entry(EntityType.ALLAY, List.of(new ItemStack(Items.DIAMOND, 8))),
+            Map.entry(EntityType.AXOLOTL, List.of(new ItemStack(Items.GLOW_BERRIES, 64), new ItemStack(Items.MOSS_BLOCK, 64))),
             Map.entry(EntityType.BAT, List.of()),
+            Map.entry(EntityType.CAMEL, List.of(new ItemStack(Items.SADDLE, 1), new ItemStack(Items.GOLDEN_APPLE, 12))),
+            Map.entry(EntityType.CAT, List.of(new ItemStack(Items.STRING, 24))),
+            Map.entry(EntityType.CHICKEN, List.of(new ItemStack(Items.COOKED_CHICKEN, 16), new ItemStack(Items.FEATHER, 16), new ItemStack(Items.EGG, 8))),
+            Map.entry(EntityType.COD, List.of(new ItemStack(Items.COOKED_COD, 12), new ItemStack(Items.BONE_MEAL, 8))),
+            Map.entry(EntityType.COW, List.of(new ItemStack(Items.COOKED_BEEF, 24), new ItemStack(Items.LEATHER, 12))),
+            Map.entry(EntityType.DONKEY, List.of(new ItemStack(Items.LEATHER, 48))),
+            Map.entry(EntityType.FROG, List.of(new ItemStack(Items.OCHRE_FROGLIGHT, 16), new ItemStack(Items.PEARLESCENT_FROGLIGHT, 16), new ItemStack(Items.VERDANT_FROGLIGHT, 16))),
+            Map.entry(EntityType.GLOW_SQUID, List.of(new ItemStack(Items.GLOW_INK_SAC, 32))),
+            Map.entry(EntityType.HORSE, List.of(new ItemStack(Items.LEATHER, 64))),
+            Map.entry(EntityType.MOOSHROOM, List.of(new ItemStack(Items.COOKED_BEEF, 24), new ItemStack(Items.LEATHER, 12))),
             Map.entry(EntityType.PIGLIN, List.of(new ItemStack(Items.GOLD_INGOT, 32))),
             Map.entry(EntityType.SHULKER, List.of(new ItemStack(Items.SHULKER_SHELL, 32)))
     ));
@@ -254,8 +267,8 @@ public class RitualPoleBlockEntity extends BlockEntity {
             return false;
         }
 
-        if ((entityType.isIn(ModTags.LIVES_IN_OVERWORLD_LAND) || entityType.isIn(ModTags.LIVES_IN_OVERWORLD_FLYING) &&
-                ritualPoleType != RitualPoleType.OVERWORLD)) {
+        if ((entityType.isIn(ModTags.LIVES_IN_OVERWORLD_LAND) || entityType.isIn(ModTags.LIVES_IN_OVERWORLD_FLYING)) &&
+                ritualPoleType != RitualPoleType.OVERWORLD) {
             return false;
         }
 

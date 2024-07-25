@@ -15,6 +15,8 @@ import net.minecraft.entity.mob.GuardianEntity;
 import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.entity.mob.SlimeEntity;
 import net.minecraft.entity.passive.BatEntity;
+import net.minecraft.entity.passive.CamelEntity;
+import net.minecraft.entity.passive.DonkeyEntity;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -85,7 +87,13 @@ public abstract class LivingEntityMixin extends Entity {
 			if (attribute == EntityAttributes.GENERIC_ATTACK_DAMAGE &&
 					!getAttributes().hasAttribute(EntityAttributes.GENERIC_ATTACK_DAMAGE)) {
 
-				info.setReturnValue((double) getMaxHealth());
+				if (((LivingEntity) (Object) this) instanceof CamelEntity ||
+					((LivingEntity) (Object) this) instanceof DonkeyEntity) {
+
+					info.setReturnValue(getMaxHealth() / 2d);
+				} else {
+					info.setReturnValue((double) getMaxHealth());
+				}
 			}
 
 			if (attribute == EntityAttributes.GENERIC_FOLLOW_RANGE) {

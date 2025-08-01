@@ -5,6 +5,7 @@ import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.enums.DoubleBlockHalf;
+import net.minecraft.fluid.Fluids;
 import net.minecraft.registry.tag.BlockTags;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.StructureWorldAccess;
@@ -46,12 +47,35 @@ public class RitualPoleFeature extends Feature<RitualPoleFeatureConfig> {
                 return false;
             }
 
-            world.setBlockState(testPos,
-                    blockState.with(RitualPoleBlock.TYPE, config.type()), Block.NOTIFY_ALL);
+            BlockState bottomBlockState = blockState.with(RitualPoleBlock.TYPE, config.type());
+            BlockState topBlockState = blockState.with(RitualPoleBlock.HALF, DoubleBlockHalf.UPPER)
+                    .with(RitualPoleBlock.TYPE, config.type());
 
-            world.setBlockState(testPos.up(),
-                    blockState.with(RitualPoleBlock.HALF, DoubleBlockHalf.UPPER)
-                              .with(RitualPoleBlock.TYPE, config.type()), Block.NOTIFY_ALL);
+//            if (config.type() == RitualPoleType.AQUATIC) {
+//                world.setBlockState(testPos,
+//                        bottomBlockState.with(RitualPoleBlock.WATERLOGGED, true), Block.NOTIFY_ALL);
+//
+//                world.setBlockState(testPos.up(),
+//                        topBlockState.with(RitualPoleBlock.WATERLOGGED, true), Block.NOTIFY_ALL);
+//            } else {
+//                world.setBlockState(testPos, bottomBlockState, Block.NOTIFY_ALL);
+//
+//                world.setBlockState(testPos.up(), topBlockState, Block.NOTIFY_ALL);
+//            }
+
+            if (world.getBlockState(testPos).isOf(Blocks.WATER)) {
+                world.setBlockState(testPos,
+                        bottomBlockState.with(RitualPoleBlock.WATERLOGGED, true), Block.NOTIFY_ALL);
+            } else {
+                world.setBlockState(testPos, bottomBlockState, Block.NOTIFY_ALL);
+            }
+
+            if (world.getBlockState(testPos.up()).isOf(Blocks.WATER)) {
+                world.setBlockState(testPos.up(),
+                        topBlockState.with(RitualPoleBlock.WATERLOGGED, true), Block.NOTIFY_ALL);
+            } else {
+                world.setBlockState(testPos.up(), topBlockState, Block.NOTIFY_ALL);
+            }
 
             return true;
         }

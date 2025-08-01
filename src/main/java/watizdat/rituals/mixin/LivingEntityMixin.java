@@ -17,6 +17,7 @@ import net.minecraft.entity.mob.SlimeEntity;
 import net.minecraft.entity.passive.BatEntity;
 import net.minecraft.entity.passive.CamelEntity;
 import net.minecraft.entity.passive.DonkeyEntity;
+import net.minecraft.entity.passive.MuleEntity;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -91,6 +92,8 @@ public abstract class LivingEntityMixin extends Entity {
 					((LivingEntity) (Object) this) instanceof DonkeyEntity) {
 
 					info.setReturnValue(getMaxHealth() / 2d);
+				} else if (((LivingEntity) (Object) this) instanceof MuleEntity) {
+					info.setReturnValue(getMaxHealth() / 1.5);
 				} else {
 					info.setReturnValue((double) getMaxHealth());
 				}

@@ -24,6 +24,7 @@ import org.joml.Vector3d;
 import watizdat.rituals.Rituals;
 import watizdat.rituals.block.RitualPoleBlock;
 import watizdat.rituals.entity.ModEntityHelper;
+import watizdat.rituals.enums.RitualEntityValidityReason;
 import watizdat.rituals.enums.RitualPoleType;
 import watizdat.rituals.enums.RitualState;
 import watizdat.rituals.init.ModBlockEntityTypes;
@@ -36,6 +37,7 @@ import java.util.*;
 // TODO: Add navigation to squid
 // TODO: Fix player somehow getting hit after an entity already died
 // TODO: Add limit to amount of mobs in ritual
+// TODO: Make the block waterloggable
 public class RitualPoleBlockEntity extends BlockEntity {
     public static final HashMap<EntityType<?>, List<ItemStack>> ENTITY_TYPE_LOOT_MAP = new HashMap<>(Map.ofEntries(
             Map.entry(EntityType.ALLAY, List.of(new ItemStack(Items.DIAMOND, 8))),
@@ -51,6 +53,10 @@ public class RitualPoleBlockEntity extends BlockEntity {
             Map.entry(EntityType.GLOW_SQUID, List.of(new ItemStack(Items.GLOW_INK_SAC, 32))),
             Map.entry(EntityType.HORSE, List.of(new ItemStack(Items.LEATHER, 64))),
             Map.entry(EntityType.MOOSHROOM, List.of(new ItemStack(Items.COOKED_BEEF, 24), new ItemStack(Items.LEATHER, 12))),
+            Map.entry(EntityType.MULE, List.of(new ItemStack(Items.LEATHER, 64))),
+            Map.entry(EntityType.OCELOT, List.of(new ItemStack(Items.STRING, 24))),
+            Map.entry(EntityType.PARROT, List.of(new ItemStack(Items.FEATHER, 8))),
+            Map.entry(EntityType.PIG, List.of(new ItemStack(Items.COOKED_PORKCHOP, 24))),
             Map.entry(EntityType.PIGLIN, List.of(new ItemStack(Items.GOLD_INGOT, 32))),
             Map.entry(EntityType.SHULKER, List.of(new ItemStack(Items.SHULKER_SHELL, 32)))
     ));
@@ -96,7 +102,10 @@ public class RitualPoleBlockEntity extends BlockEntity {
             EntityType<?> entityType = entry.getKey();
             int count = entry.getValue();
 
-            if (!isEntityValidForRitualPoleType(entityType, getWorld().getBlockState(getPos()).get(RitualPoleBlock.TYPE))) {
+            if (getEntityValidityReasonForRitualPoleType(
+                    entityType,
+                    getWorld().getBlockState(getPos()).get(RitualPoleBlock.TYPE))
+                    != RitualEntityValidityReason.NONE) {
                 continue;
             }
 
@@ -201,7 +210,10 @@ public class RitualPoleBlockEntity extends BlockEntity {
             EntityType<?> entityType = entry.getKey();
             int count = entry.getValue();
 
-            if (!isEntityValidForRitualPoleType(entityType, getWorld().getBlockState(getPos()).get(RitualPoleBlock.TYPE))) {
+            if (getEntityValidityReasonForRitualPoleType(
+                    entityType,
+                    getWorld().getBlockState(getPos()).get(RitualPoleBlock.TYPE))
+                    != RitualEntityValidityReason.NONE) {
                 continue;
             }
 
@@ -262,25 +274,25 @@ public class RitualPoleBlockEntity extends BlockEntity {
         markDirty();
     }
 
-    public static boolean isEntityValidForRitualPoleType(EntityType<?> entityType, RitualPoleType ritualPoleType) {
+    public static RitualEntityValidityReason getEntityValidityReasonForRitualPoleType(EntityType<?> entityType, RitualPoleType ritualPoleType) {
         if (ModEntityHelper.isWaterCreature(entityType) && ritualPoleType != RitualPoleType.AQUATIC) {
-            return false;
+            return RitualEntityValidityReason.AQUATIC_ONLY;
         }
 
         if ((entityType.isIn(ModTags.LIVES_IN_OVERWORLD_LAND) || entityType.isIn(ModTags.LIVES_IN_OVERWORLD_FLYING)) &&
                 ritualPoleType != RitualPoleType.OVERWORLD) {
-            return false;
+            return RitualEntityValidityReason.OVERWORLD_ONLY;
         }
 
         if (entityType.isIn(ModTags.LIVES_IN_NETHER) && ritualPoleType != RitualPoleType.NETHER) {
-            return false;
+            return RitualEntityValidityReason.NETHER_ONLY;
         }
 
         if (entityType.isIn(ModTags.LIVES_IN_END) && ritualPoleType != RitualPoleType.END) {
-            return false;
+            return RitualEntityValidityReason.END_ONLY;
         }
 
-        return true;
+        return RitualEntityValidityReason.NONE;
     }
 
     private static BlockPos canSpawn(Vec3d raycastStart, Vec3d raycastEnd, PlayerEntity player, EntityType<?> entityType) {

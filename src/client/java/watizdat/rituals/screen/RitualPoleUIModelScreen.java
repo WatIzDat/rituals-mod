@@ -1,5 +1,6 @@
 package watizdat.rituals.screen;
 
+import io.wispforest.owo.ui.base.BaseOwoTooltipComponent;
 import io.wispforest.owo.ui.base.BaseUIModelScreen;
 import io.wispforest.owo.ui.component.ButtonComponent;
 import io.wispforest.owo.ui.component.LabelComponent;
@@ -8,6 +9,7 @@ import io.wispforest.owo.ui.core.Component;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gui.tooltip.TooltipComponent;
 import net.minecraft.entity.EntityType;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketByteBuf;
@@ -15,8 +17,10 @@ import net.minecraft.registry.Registries;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
+import org.jetbrains.annotations.Nullable;
 import watizdat.rituals.Rituals;
 import watizdat.rituals.block.entity.RitualPoleBlockEntity;
+import watizdat.rituals.enums.RitualEntityValidityReason;
 import watizdat.rituals.enums.RitualPoleType;
 import watizdat.rituals.enums.RitualState;
 import watizdat.rituals.network.ModNetworkConstants;
@@ -95,8 +99,12 @@ public class RitualPoleUIModelScreen extends BaseUIModelScreen<FlowLayout> {
             int availableCount = availableCounts.get(entityTypeId);
             int usedCount = usedCounts.get(entityTypeId);
 
-            boolean isEntityValidForRitualPoleType =
-                    RitualPoleBlockEntity.isEntityValidForRitualPoleType(Registries.ENTITY_TYPE.get(entityTypeId), ritualPoleType);
+            RitualEntityValidityReason entityValidityReason =
+                    RitualPoleBlockEntity.getEntityValidityReasonForRitualPoleType(Registries.ENTITY_TYPE.get(entityTypeId), ritualPoleType);
+
+            boolean isEntityValidForRitualPoleType = entityValidityReason == RitualEntityValidityReason.NONE;
+
+            String entityValidityReasonMessage = getEntityValidityReasonMessage(entityValidityReason);
 
             FlowLayout entityTypesKilledListEntry = model.expandTemplate(
                     FlowLayout.class,
@@ -104,6 +112,7 @@ public class RitualPoleUIModelScreen extends BaseUIModelScreen<FlowLayout> {
                     Map.of(
                             "entityType", entityTypeId.toString(),
                             "entityTypeName", Registries.ENTITY_TYPE.get(entityTypeId).getName().getString(),
+                            "entityValidityReason", entityValidityReasonMessage,
                             "availableCount", String.valueOf(availableCount),
                             "usedCount", String.valueOf(usedCount),
                             "color", isEntityValidForRitualPoleType ? "#00000000" : "#80FF2D00"));
@@ -171,6 +180,19 @@ public class RitualPoleUIModelScreen extends BaseUIModelScreen<FlowLayout> {
         for (Component entry : invalidEntries) {
             entityTypesKilledListContainer.child(entry);
         }
+    }
+
+    private static String getEntityValidityReasonMessage(RitualEntityValidityReason entityValidityReason) {
+        String entityValidityReasonMessage = "";
+
+        switch (entityValidityReason) {
+            case NONE -> entityValidityReasonMessage = "";
+            case AQUATIC_ONLY -> entityValidityReasonMessage = "gui.rituals.ritual_pole.aquatic_only_message";
+            case OVERWORLD_ONLY -> entityValidityReasonMessage = "gui.rituals.ritual_pole.overworld_only_message";
+            case NETHER_ONLY -> entityValidityReasonMessage = "gui.rituals.ritual_pole.nether_only_message";
+            case END_ONLY -> entityValidityReasonMessage = "gui.rituals.ritual_pole.end_only_message";
+        }
+        return entityValidityReasonMessage;
     }
 
     @Override

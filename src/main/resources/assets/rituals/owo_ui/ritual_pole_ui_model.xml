@@ -209,6 +209,8 @@
                 </surface>
 
                 <z-index>-2</z-index>
+
+                <tooltip-text translate="true">{{entityValidityReason}}</tooltip-text>
             </flow-layout>
         </template>
 
@@ -225,7 +227,7 @@
                         <shadow>true</shadow>
 
                         <positioning type="relative">40,100</positioning>
-                        <z-index>1000</z-index>
+                        <z-index>300</z-index>
                     </label>
                 </children>
 
